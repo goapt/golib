@@ -1,2 +1,2 @@
 # golib
-go lib
+go libs
