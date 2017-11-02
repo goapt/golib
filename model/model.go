@@ -13,7 +13,6 @@ var _ IModel = (*BaseModel)(nil)
 type BaseModel struct {
 	Model              IModel
 	dbName             string
-	Relations          map[string]interface{} `xorm:"-" json:"-"`
 	Builder            *Builder               `xorm:"-" json:"-"`
 	TransactionSession *goxorm.Session        `xorm:"-" json:"-"`
 }
@@ -115,6 +114,14 @@ func (this *BaseModel) GetByWhere(query string, args ...interface{}) (bool, erro
 	return this.Where(query, args...).Get()
 }
 
+func (this *BaseModel) Reset() IModel {
+	c := this.Model
+	p := reflect.ValueOf(&c).Elem()
+	p.Set(reflect.Zero(p.Type()))
+	//fmt.Printf("%+v",p)
+	return this
+}
+
 func (this *BaseModel) Create() (int64, error) {
 	return this.DB().Insert(this.Model)
 }
@@ -181,7 +188,7 @@ func (this *BaseModel) Get() (bool, error) {
 	if this.Builder != nil {
 		this.Builder.Patch(session)
 	}
-	return session.Get(this.Model)
+	return session.NoAutoCondition().Get(this.Model)
 }
 
 func (this *BaseModel) All(beans interface{}) error {

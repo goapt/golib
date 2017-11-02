@@ -39,6 +39,7 @@ type IModel interface {
 	GetSession() (*goxorm.Session)              // 事务中传递
 	WithSession(session *goxorm.Session) IModel // 绑定session
 
+	Reset() IModel
 	GetField(name string) interface{}
 	GetBuilder() *Builder
 	QueryString() ([]map[string]string, error)
