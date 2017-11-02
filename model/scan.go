@@ -34,27 +34,31 @@ func cannotConvert(d reflect.Value, s interface{}) error {
 }
 
 func convertAssignBulkString(d reflect.Value, s []byte) (err error) {
-	fieldType := d.Type()
+	ss := string(s)
+	if ss == "" {
+		return
+	}
 
+	fieldType := d.Type()
 	switch fieldType.Kind() {
 	case reflect.Float32, reflect.Float64:
 		var x float64
-		x, err = strconv.ParseFloat(string(s), d.Type().Bits())
+		x, err = strconv.ParseFloat(ss, d.Type().Bits())
 		d.SetFloat(x)
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		var x int64
-		x, err = strconv.ParseInt(string(s), 10, d.Type().Bits())
+		x, err = strconv.ParseInt(ss, 10, d.Type().Bits())
 		d.SetInt(x)
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		var x uint64
-		x, err = strconv.ParseUint(string(s), 10, d.Type().Bits())
+		x, err = strconv.ParseUint(ss, 10, d.Type().Bits())
 		d.SetUint(x)
 	case reflect.Bool:
 		var x bool
-		x, err = strconv.ParseBool(string(s))
+		x, err = strconv.ParseBool(ss)
 		d.SetBool(x)
 	case reflect.String:
-		d.SetString(string(s))
+		d.SetString(ss)
 	case reflect.Slice:
 		if d.Type().Elem().Kind() != reflect.Uint8 {
 			err = cannotConvert(d, s)
@@ -63,7 +67,7 @@ func convertAssignBulkString(d reflect.Value, s []byte) (err error) {
 		}
 	case reflect.Struct:
 		if fieldType.ConvertibleTo(_ctime_type) {
-			t, err := time.Parse("2006-01-02 15:04:05", string(s))
+			t, err := time.Parse("2006-01-02 15:04:05", ss)
 			if err != nil {
 				return err
 			}
