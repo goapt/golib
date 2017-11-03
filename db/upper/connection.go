@@ -64,7 +64,7 @@ func Connect(configs map[string]*db.Config) {
 			continue
 		}
 
-		if conf.Driver == "mysql" {
+		if conf.Driver != "mysql" {
 			continue
 		}
 
