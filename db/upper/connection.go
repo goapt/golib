@@ -2,8 +2,8 @@ package upper
 
 import (
 	"strings"
-	"app/core/db"
 	"upper.io/db.v3/mysql"
+	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/logger"
 	"upper.io/db.v3/lib/sqlbuilder"
 )
