@@ -48,19 +48,22 @@ func (this *DebugTag) Tag(key string, data ...interface{}) {
 	}
 
 	st := Callstack(2)
+	t := time.Now().Sub(this.t).String()
 
-	fmt.Println(color.Blue("[Debug Tag]") + " -------------------------> " + key + " <-------------------------")
-	fmt.Println(color.Green("File:" + st.File + ", Func:" + st.Func + ", Line:" + strconv.Itoa(st.LineNo)))
-	if len(data) > 0 {
-		format := strings.Repeat("===> %v\n" , len(data))
-		fmt.Println(color.Yellow(format , data...))
+	if printTag == "" || printTag == key {
+		fmt.Println(color.Blue("[Debug Tag]("+t+")") + " -------------------------> " + key + " <-------------------------")
+		fmt.Println(color.Green("File:" + st.File + ", Func:" + st.Func + ", Line:" + strconv.Itoa(st.LineNo)))
+		if len(data) > 0 {
+			format := strings.Repeat("===> %v\n", len(data))
+			fmt.Println(color.Yellow(format, data...))
+		}
 	}
 
 	this.data = append(this.data, DebugTagData{
 		Key:     key,
 		Data:    data,
 		Stack:   st,
-		Current: time.Now().Sub(this.t).String(),
+		Current: t,
 	})
 }
 

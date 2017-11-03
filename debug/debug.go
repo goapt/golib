@@ -12,12 +12,14 @@ import (
 
 var (
 	debugFlag = "off"
+	printTag  = ""
 	savePath  = "./debug/"
 	debugLock sync.Mutex
 )
 
-func Open() {
-	debugFlag = "on"
+func Open(flag, tag string) {
+	debugFlag = flag
+	printTag = tag
 }
 
 func SavePath(p string) {
