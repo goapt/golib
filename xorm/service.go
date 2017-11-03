@@ -2,9 +2,11 @@ package xorm
 
 import (
 	"strings"
+
 	"github.com/go-xorm/xorm"
 	_ "github.com/go-sql-driver/mysql" //mysql
 	"github.com/verystar/golib/logger"
+	"github.com/verystar/golib/db"
 )
 
 // DBService is a database engine object.
@@ -15,18 +17,7 @@ type DBService struct {
 
 var dbService *DBService
 
-type Config struct {
-	Enable       bool
-	Driver       string
-	Dsn          string
-	MaxOpenConns int  `toml:"max_open_conns"`
-	MaxIdleConns int  `toml:"max_idle_conns"`
-	Cache        bool
-	ShowExecTime bool `toml:"show_exec_time"`
-	ShowSql      bool `toml:"show_sql"`
-}
-
-func Connect(configs map[string]*Config) {
+func Connect(configs map[string]*db.Config) {
 
 	dbService = &DBService{
 		List: map[string]*xorm.Engine{},
