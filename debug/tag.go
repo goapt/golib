@@ -50,7 +50,7 @@ func (this *DebugTag) Tag(key string, data ...interface{}) {
 	st := Callstack(2)
 	t := time.Now().Sub(this.t).String()
 
-	if printTag == "" || printTag == key {
+	if printTag == "" || strings.Contains(key, printTag) {
 		fmt.Println(color.Blue("[Debug Tag]("+t+")") + " -------------------------> " + key + " <-------------------------")
 		fmt.Println(color.Green("File:" + st.File + ", Func:" + st.Func + ", Line:" + strconv.Itoa(st.LineNo)))
 		if len(data) > 0 {
