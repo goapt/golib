@@ -9,8 +9,14 @@ import (
 
 var _ db.IBuilder = (*Builder)(nil)
 
+
+type UpperDatabase interface {
+	upperdb.Database
+	sqlbuilder.SQLBuilder
+}
+
 type Builder struct {
-	db         sqlbuilder.Database
+	db         UpperDatabase
 	collection upperdb.Collection
 	where      upperdb.Result
 }
@@ -101,4 +107,10 @@ func (b *Builder) Update(i interface{}) (int64, error) {
 func (b *Builder) Delete() (int64, error) {
 	err := b.where.Delete()
 	return 0, err
+}
+
+func (b *Builder) WithContext(i interface{}) db.IBuilder {
+	tx, _ := i.(sqlbuilder.Tx)
+	b.db = tx
+	return b
 }

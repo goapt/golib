@@ -36,6 +36,8 @@ type IBuilder interface {
 	Update(i interface{}) (int64, error)
 	//删除
 	Delete() (int64, error)
+	//设置事务上下文
+	WithContext(i interface{}) IBuilder
 	////事务开始
 	//Begin() IBuilder
 	////事务提交
