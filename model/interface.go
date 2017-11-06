@@ -10,6 +10,7 @@ type IModel interface {
 	PK() string
 	Columns() []string
 	DB() *goxorm.Engine
+	GetModel() IModel
 
 	//data format
 	ToMapString() map[string]string
