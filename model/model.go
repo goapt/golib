@@ -17,6 +17,11 @@ type BaseModel struct {
 	TransactionSession *goxorm.Session        `xorm:"-" json:"-"`
 }
 
+//兼容性修改
+func (this *BaseModel)GetModel() IModel {
+	return this.Model
+}
+
 func (this *BaseModel) GetSession() *goxorm.Session {
 	if this.TransactionSession != nil {
 		return this.TransactionSession

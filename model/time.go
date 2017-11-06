@@ -17,14 +17,24 @@ func (t *Time) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (t Time) MarshalJSON() ([]byte, error) {
-	b := make([]byte, 0, len(timeFormart)+2)
-	b = append(b, '"')
-	b = time.Time(t).AppendFormat(b, timeFormart)
-	b = append(b, '"')
-
-	return b, nil
+	return t.marshal(true)
 }
 
+func (t Time)MarshalBinary() ([]byte, error) {
+	return t.marshal(false)
+}
+
+func (t Time)marshal(is_append bool) ([]byte, error) {
+	b := make([]byte, 0, len(timeFormart)+2)
+	if is_append {
+		b = append(b, '"')
+	}
+	b = time.Time(t).AppendFormat(b, timeFormart)
+	if is_append {
+		b = append(b, '"')
+	}
+	return b, nil
+}
 func (t Time) String() string {
 	return time.Time(t).Format(timeFormart)
 }
