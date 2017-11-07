@@ -96,7 +96,12 @@ func (b *Builder) Count() (uint64, error) {
 }
 
 func (b *Builder) Create(i interface{}) (int64, error) {
-	autoTime(i, []string{"create_time", "created_at"})
+	t := reflect.TypeOf(i).Elem().Kind()
+
+	if t == reflect.Struct {
+		fields := mapper.FieldMap(reflect.ValueOf(i))
+		autoTime(fields, []string{"create_time", "create_at"})
+	}
 
 	id, err := b.collection.Insert(i)
 	if err != nil {
@@ -105,8 +110,67 @@ func (b *Builder) Create(i interface{}) (int64, error) {
 	return id.(int64), nil
 }
 
-func (b *Builder) Update(i interface{}) (int64, error) {
-	autoTime(i, []string{"update_time", "updated_at"})
+func inSlice(k string, s []string) bool {
+	for _, v := range s {
+		if k == v {
+			return true
+		}
+	}
+	return false
+}
+
+func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
+	zv := make([]string, 0)
+
+	if len(zeroValues) > 0 {
+		zv = zeroValues[0]
+	}
+
+	t := reflect.TypeOf(i).Elem()
+
+	m := make(map[string]interface{})
+	switch t.Kind() {
+	case reflect.Struct:
+		fields := mapper.FieldMap(reflect.ValueOf(i))
+		autoTime(fields, []string{"update_time", "update_at"})
+		for k, v := range fields {
+			v = reflect.Indirect(v)
+			if v.IsValid() && !inSlice(k, zv) {
+				switch v.Interface().(type) {
+				case int, int8, int16, int32, int64:
+					c := v.Int()
+					if c != 0 {
+						m[k] = c
+					}
+				case uint, uint8, uint16, uint32, uint64:
+					c := v.Uint()
+					if c != 0 {
+						m[k] = c
+					}
+				case float32, float64:
+					c := v.Float()
+					if c != 0.0 {
+						m[k] = c
+					}
+				case bool:
+					c := v.Bool()
+					if c != false {
+						m[k] = c
+					}
+				case string:
+					c := v.String()
+					if c != "" {
+						m[k] = c
+					}
+				default:
+					m[k] = v.Interface()
+				}
+			} else {
+				m[k] = v.Interface()
+			}
+		}
+		i = m
+	}
 	err := b.where.Update(i)
 	return 0, err
 }
@@ -122,23 +186,11 @@ func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	return b
 }
 
-func autoTime(i interface{}, f []string) {
-	switch i.(type) {
-	case struct{}:
-		fields := mapper.FieldsByName(reflect.ValueOf(i), f)
-		for i := range fields {
-			if fields[i].IsValid() {
-				t := time.Now()
-				fields[i].Set(reflect.ValueOf(t).Convert(fields[i].Type()))
-			}
-		}
-	case map[string]interface{}:
-		i := i.(map[string]interface{})
-		for _, v := range f {
-			_, ok := i[v]
-			if !ok {
-				i[v] = time.Now().Format("2006-01-02 15:04:05")
-			}
+func autoTime(fields map[string]reflect.Value, f []string) {
+	for k, v := range fields {
+		v = reflect.Indirect(v)
+		if v.IsValid() && inSlice(k, f) && v.Type().Kind() == reflect.String {
+			v.SetString(time.Now().Format("2006-01-02 15:04:05"))
 		}
 	}
 }

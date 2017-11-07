@@ -33,7 +33,7 @@ type IBuilder interface {
 	//创建
 	Create(i interface{}) (int64, error)
 	//更新
-	Update(i interface{}) (int64, error)
+	Update(i interface{},s ...[]string) (int64, error)
 	//删除
 	Delete() (int64, error)
 	//设置事务上下文
