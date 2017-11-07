@@ -76,6 +76,7 @@ func Connect(configs map[string]*db.Config) {
 			errs = append(errs, err.Error())
 			continue
 		}
+		logger.Debug("[db] connect:" + key)
 
 		sess.SetMaxOpenConns(conf.MaxOpenConns)
 		sess.SetMaxIdleConns(conf.MaxIdleConns)

@@ -1,14 +1,18 @@
 package upper
 
 import (
-	"github.com/verystar/golib/db"
 	"database/sql"
-	"upper.io/db.v3/lib/sqlbuilder"
+	"reflect"
+	"time"
+
+	"github.com/verystar/golib/db"
 	upperdb "upper.io/db.v3"
+	"upper.io/db.v3/lib/reflectx"
+	"upper.io/db.v3/lib/sqlbuilder"
 )
 
 var _ db.IBuilder = (*Builder)(nil)
-
+var mapper = reflectx.NewMapper("db")
 
 type UpperDatabase interface {
 	upperdb.Database
@@ -92,6 +96,8 @@ func (b *Builder) Count() (uint64, error) {
 }
 
 func (b *Builder) Create(i interface{}) (int64, error) {
+	autoTime(i, []string{"create_time", "created_at"})
+
 	id, err := b.collection.Insert(i)
 	if err != nil {
 		return 0, err
@@ -100,6 +106,7 @@ func (b *Builder) Create(i interface{}) (int64, error) {
 }
 
 func (b *Builder) Update(i interface{}) (int64, error) {
+	autoTime(i, []string{"update_time", "updated_at"})
 	err := b.where.Update(i)
 	return 0, err
 }
@@ -113,4 +120,25 @@ func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	tx, _ := i.(sqlbuilder.Tx)
 	b.db = tx
 	return b
+}
+
+func autoTime(i interface{}, f []string) {
+	switch i.(type) {
+	case struct{}:
+		fields := mapper.FieldsByName(reflect.ValueOf(i), f)
+		for i := range fields {
+			if fields[i].IsValid() {
+				t := time.Now()
+				fields[i].Set(reflect.ValueOf(t).Convert(fields[i].Type()))
+			}
+		}
+	case map[string]interface{}:
+		i := i.(map[string]interface{})
+		for _, v := range f {
+			_, ok := i[v]
+			if !ok {
+				i[v] = time.Now().Format("2006-01-02 15:04:05")
+			}
+		}
+	}
 }
