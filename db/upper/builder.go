@@ -42,7 +42,7 @@ func (b *Builder) Table(t string) db.IBuilder {
 }
 
 func (b *Builder) Where(w ...interface{}) db.IBuilder {
-	b.where = b.collection.Find(w)
+	b.where = b.collection.Find(w...)
 	return b
 }
 
