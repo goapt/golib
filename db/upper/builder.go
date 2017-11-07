@@ -126,51 +126,14 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 		zv = zeroValues[0]
 	}
 
-	t := reflect.TypeOf(i).Elem()
+	t := reflect.TypeOf(i).Elem().Kind()
 
-	m := make(map[string]interface{})
-	switch t.Kind() {
-	case reflect.Struct:
+	if t == reflect.Struct {
 		fields := mapper.FieldMap(reflect.ValueOf(i))
 		autoTime(fields, []string{"update_time", "update_at"})
-		for k, v := range fields {
-			v = reflect.Indirect(v)
-			if v.IsValid() && !inSlice(k, zv) {
-				switch v.Interface().(type) {
-				case int, int8, int16, int32, int64:
-					c := v.Int()
-					if c != 0 {
-						m[k] = c
-					}
-				case uint, uint8, uint16, uint32, uint64:
-					c := v.Uint()
-					if c != 0 {
-						m[k] = c
-					}
-				case float32, float64:
-					c := v.Float()
-					if c != 0.0 {
-						m[k] = c
-					}
-				case bool:
-					c := v.Bool()
-					if c != false {
-						m[k] = c
-					}
-				case string:
-					c := v.String()
-					if c != "" {
-						m[k] = c
-					}
-				default:
-					m[k] = v.Interface()
-				}
-			} else {
-				m[k] = v.Interface()
-			}
-		}
-		i = m
+		i = zeroValueFilter(fields, zv)
 	}
+
 	err := b.where.Update(i)
 	return 0, err
 }
@@ -184,6 +147,49 @@ func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	tx, _ := i.(sqlbuilder.Tx)
 	b.db = tx
 	return b
+}
+
+func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]interface{} {
+	m := make(map[string]interface{})
+
+	for k, v := range fields {
+		v = reflect.Indirect(v)
+		if v.IsValid() && !inSlice(k, zv) {
+			switch v.Interface().(type) {
+			case int, int8, int16, int32, int64:
+				c := v.Int()
+				if c != 0 {
+					m[k] = c
+				}
+			case uint, uint8, uint16, uint32, uint64:
+				c := v.Uint()
+				if c != 0 {
+					m[k] = c
+				}
+			case float32, float64:
+				c := v.Float()
+				if c != 0.0 {
+					m[k] = c
+				}
+			case bool:
+				c := v.Bool()
+				if c != false {
+					m[k] = c
+				}
+			case string:
+				c := v.String()
+				if c != "" {
+					m[k] = c
+				}
+			default:
+				m[k] = v.Interface()
+			}
+		} else {
+			m[k] = v.Interface()
+		}
+	}
+
+	return m
 }
 
 func autoTime(fields map[string]reflect.Value, f []string) {
