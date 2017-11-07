@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
-	"time"
 	"sync"
+	"time"
 )
 
 var (
