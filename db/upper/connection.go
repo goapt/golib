@@ -2,10 +2,11 @@ package upper
 
 import (
 	"strings"
-	"upper.io/db.v3/mysql"
+
 	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/logger"
 	"upper.io/db.v3/lib/sqlbuilder"
+	"upper.io/db.v3/mysql"
 )
 
 // MustDB gets the specified database engine,
@@ -77,6 +78,10 @@ func Connect(configs map[string]*db.Config) {
 			continue
 		}
 		logger.Debug("[db] connect:" + key)
+
+		if conf.ShowSql {
+			sess.SetLogging(true)
+		}
 
 		sess.SetMaxOpenConns(conf.MaxOpenConns)
 		sess.SetMaxIdleConns(conf.MaxIdleConns)
