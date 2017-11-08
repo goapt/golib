@@ -2,7 +2,6 @@ package upper
 
 import (
 	"database/sql"
-	"fmt"
 	"reflect"
 	"time"
 
@@ -150,7 +149,6 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 		i = zeroValueFilter(fields, zv)
 	case reflect.Map:
 		cols, err := b.Cloumns()
-		fmt.Println(cols)
 		if err == nil {
 			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
 		}
@@ -181,7 +179,7 @@ func (b *Builder) Cloumns() (clms []string, err error) {
 	}
 
 	q := b.db.Select("column_name").
-		From("information_schema.colums").
+		From("information_schema.columns").
 		Where("table_schema = ? AND table_name = ?", b.db.Name(), b.collection.Name())
 
 	iter := q.Iterator()
