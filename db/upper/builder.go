@@ -108,7 +108,7 @@ func (b *Builder) Create(i interface{}) (int64, error) {
 	case reflect.Map:
 		cols, err := b.Cloumns()
 		if err == nil {
-			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
+			i = mapAutoTime(i, cols, []string{"create_time", "create_at"})
 		}
 	}
 
