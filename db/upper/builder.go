@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/verystar/golib/cache"
 	"github.com/verystar/golib/db"
 	upperdb "upper.io/db.v3"
 	"upper.io/db.v3/lib/reflectx"
@@ -20,9 +21,10 @@ type UpperDatabase interface {
 }
 
 type Builder struct {
-	db         UpperDatabase
-	collection upperdb.Collection
-	where      upperdb.Result
+	db           UpperDatabase
+	collection   upperdb.Collection
+	where        upperdb.Result
+	cacheColumns *cache.Cache
 }
 
 func NewBuilder(db ... string) *Builder {
@@ -32,7 +34,8 @@ func NewBuilder(db ... string) *Builder {
 	}
 	client := MustDB(link_db)
 	return &Builder{
-		db: client,
+		db:           client.Link,
+		cacheColumns: client.CachedColumns,
 	}
 }
 
@@ -147,6 +150,34 @@ func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	tx, _ := i.(sqlbuilder.Tx)
 	b.db = tx
 	return b
+}
+
+func (b *Builder) Cloumns() (clms []string, err error) {
+
+	h := cache.String("cloumns_" + b.db.Name() + "_" + b.collection.Name())
+
+	ccol, ok := b.cacheColumns.ReadRaw(h)
+	if ok {
+		return ccol.([]string), nil
+	}
+
+	q := b.db.Select("column_name").
+		From("information_schema.colums").
+		Where("table_schema = ? AND table_name = ?", b.db.Name(), b.collection.Name())
+
+	iter := q.Iterator()
+	defer iter.Close()
+
+	for iter.Next() {
+		var columnName string
+		if err := iter.Scan(&columnName); err != nil {
+			return nil, err
+		}
+		clms = append(clms, columnName)
+	}
+	b.cacheColumns.Write(h, clms)
+
+	return clms, nil
 }
 
 func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]interface{} {

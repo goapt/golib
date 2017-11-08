@@ -3,59 +3,47 @@ package upper
 import (
 	"strings"
 
+	"github.com/verystar/golib/cache"
 	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/logger"
 	"upper.io/db.v3/lib/sqlbuilder"
 	"upper.io/db.v3/mysql"
 )
 
+type Database struct {
+	Link          sqlbuilder.Database
+	CachedColumns *cache.Cache
+}
+
+var dbService map[string]*Database
+
 // MustDB gets the specified database engine,
 // or the default DB if no name is specified.
-func MustDB(name ...string) sqlbuilder.Database {
+func MustDB(name ...string) *Database {
 	if len(name) == 0 {
-		return dbService.Default
+		return dbService["default"]
 	}
-	engine, ok := dbService.List[name[0]]
+	engine, ok := dbService[name[0]]
 	if !ok {
-		logger.Fatal("[db] the database engine `%s` is not configured", name[0])
+		logger.Fatal("[db] the database link `%s` is not configured", name[0])
 	}
 	return engine
 }
 
-// DB is similar to MustDB, but safe.
-func DB(name ...string) (sqlbuilder.Database, bool) {
-	if len(name) == 0 {
-		return dbService.Default, true
-	}
-	engine, ok := dbService.List[name[0]]
-	return engine, ok
-}
-
 // List gets the list of database engines
-func List() map[string]sqlbuilder.Database {
-	return dbService.List
+func List() map[string]*Database {
+	return dbService
 }
-
-// DBService is a database engine object.
-type DBService struct {
-	Default sqlbuilder.Database            // the default database engine
-	List    map[string]sqlbuilder.Database // database engine list
-}
-
-var dbService *DBService
 
 func Connect(configs map[string]*db.Config) {
-
-	dbService = &DBService{
-		List: make(map[string]sqlbuilder.Database),
-	}
 
 	var errs []string
 	defer func() {
 		if len(errs) > 0 {
 			panic("[db] " + strings.Join(errs, "\n"))
 		}
-		if dbService.Default == nil {
+
+		if _, ok := dbService["default"]; !ok {
 			logger.Fatal("[db] the `default` database engine must be configured and enabled")
 		}
 	}()
@@ -86,9 +74,11 @@ func Connect(configs map[string]*db.Config) {
 		sess.SetMaxOpenConns(conf.MaxOpenConns)
 		sess.SetMaxIdleConns(conf.MaxIdleConns)
 
-		dbService.List[key] = sess
-		if key == "default" {
-			dbService.Default = sess
+		link := &Database{
+			Link:          sess,
+			CachedColumns: cache.NewCache(),
 		}
+
+		dbService[key] = link
 	}
 }
