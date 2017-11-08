@@ -101,9 +101,15 @@ func (b *Builder) Count() (uint64, error) {
 func (b *Builder) Create(i interface{}) (int64, error) {
 	t := reflect.TypeOf(i).Elem().Kind()
 
-	if t == reflect.Struct {
+	switch t {
+	case reflect.Struct:
 		fields := mapper.FieldMap(reflect.ValueOf(i))
-		autoTime(fields, []string{"create_time", "create_at"})
+		structAutoTime(fields, []string{"create_time", "create_at"})
+	case reflect.Map:
+		cols, err := b.Cloumns()
+		if err == nil {
+			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
+		}
 	}
 
 	id, err := b.collection.Insert(i)
@@ -131,10 +137,16 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 
 	t := reflect.TypeOf(i).Elem().Kind()
 
-	if t == reflect.Struct {
+	switch t {
+	case reflect.Struct:
 		fields := mapper.FieldMap(reflect.ValueOf(i))
-		autoTime(fields, []string{"update_time", "update_at"})
+		structAutoTime(fields, []string{"update_time", "update_at"})
 		i = zeroValueFilter(fields, zv)
+	case reflect.Map:
+		cols, err := b.Cloumns()
+		if err == nil {
+			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
+		}
 	}
 
 	err := b.where.Update(i)
@@ -223,11 +235,27 @@ func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]in
 	return m
 }
 
-func autoTime(fields map[string]reflect.Value, f []string) {
+func structAutoTime(fields map[string]reflect.Value, f []string) {
 	for k, v := range fields {
 		v = reflect.Indirect(v)
 		if v.IsValid() && inSlice(k, f) && v.Type().Kind() == reflect.String {
 			v.SetString(time.Now().Format("2006-01-02 15:04:05"))
 		}
 	}
+}
+
+func mapAutoTime(fileds interface{}, cols []string, f []string) map[string]string {
+	ff, ok := fileds.(map[string]interface{})
+	if !ok {
+		return nil
+	}
+
+	m := make(map[string]string, 0)
+	for _, v := range cols {
+		if inSlice(v, f) {
+			ff[v] = time.Now().Format("2006-01-02 15:04:05")
+		}
+	}
+
+	return m
 }
