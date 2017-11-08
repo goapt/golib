@@ -15,7 +15,7 @@ type Database struct {
 	CachedColumns *cache.Cache
 }
 
-var dbService map[string]*Database
+var dbService = make(map[string]*Database, 0)
 
 // MustDB gets the specified database engine,
 // or the default DB if no name is specified.
