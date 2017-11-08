@@ -2,6 +2,7 @@ package upper
 
 import (
 	"database/sql"
+	"fmt"
 	"reflect"
 	"time"
 
@@ -99,11 +100,14 @@ func (b *Builder) Count() (uint64, error) {
 }
 
 func (b *Builder) Create(i interface{}) (int64, error) {
-	t := reflect.TypeOf(i).Elem().Kind()
 
-	switch t {
+	itemV := reflect.ValueOf(i)
+	itemV = reflect.Indirect(itemV)
+	itemT := itemV.Type()
+
+	switch itemT.Kind() {
 	case reflect.Struct:
-		fields := mapper.FieldMap(reflect.ValueOf(i))
+		fields := mapper.FieldMap(itemV)
 		structAutoTime(fields, []string{"create_time", "create_at"})
 	case reflect.Map:
 		cols, err := b.Cloumns()
@@ -135,15 +139,18 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 		zv = zeroValues[0]
 	}
 
-	t := reflect.TypeOf(i).Elem().Kind()
+	itemV := reflect.ValueOf(i)
+	itemV = reflect.Indirect(itemV)
+	itemT := itemV.Type()
 
-	switch t {
+	switch itemT.Kind() {
 	case reflect.Struct:
-		fields := mapper.FieldMap(reflect.ValueOf(i))
+		fields := mapper.FieldMap(itemV)
 		structAutoTime(fields, []string{"update_time", "update_at"})
 		i = zeroValueFilter(fields, zv)
 	case reflect.Map:
 		cols, err := b.Cloumns()
+		fmt.Println(cols)
 		if err == nil {
 			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
 		}
@@ -244,18 +251,23 @@ func structAutoTime(fields map[string]reflect.Value, f []string) {
 	}
 }
 
-func mapAutoTime(fileds interface{}, cols []string, f []string) map[string]string {
-	ff, ok := fileds.(map[string]interface{})
-	if !ok {
-		return nil
-	}
+func mapAutoTime(fields interface{}, cols []string, f []string) interface{} {
 
-	m := make(map[string]string, 0)
-	for _, v := range cols {
-		if inSlice(v, f) {
-			ff[v] = time.Now().Format("2006-01-02 15:04:05")
+	switch ff := fields.(type) {
+	case map[string]interface{}:
+		for _, v := range cols {
+			if inSlice(v, f) {
+				ff[v] = time.Now().Format("2006-01-02 15:04:05")
+			}
 		}
+		return ff
+	case map[string]string:
+		for _, v := range cols {
+			if inSlice(v, f) {
+				ff[v] = time.Now().Format("2006-01-02 15:04:05")
+			}
+		}
+		return ff
 	}
-
-	return m
+	return fields
 }
