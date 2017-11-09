@@ -15,11 +15,11 @@ type IQuery interface {
 	GetById(i interface{}, id interface{}) (bool, error)
 }
 
-func Builder(m IModel) db.IBuilder {
+func Builder(m db.IModel) db.IBuilder {
 	return upper.NewBuilder(m.DbName()).Table(m.TableName())
 }
 
-func NewQuery(m IModel) IQuery {
+func NewQuery(m db.IModel) IQuery {
 	return &Query{
 		IBuilder: Builder(m),
 	}
