@@ -4,16 +4,16 @@ import (
 	"runtime"
 )
 
-type callStack struct {
+type CallStack struct {
 	Func   string
 	File   string
 	LineNo int
 }
 
-func Callstack(skipFrames int) callStack {
+func Callstack(skipFrames int) CallStack {
 	pc, file, lineno, _ := runtime.Caller(skipFrames)
 	f := runtime.FuncForPC(pc)
-	return callStack{f.Name(), file, lineno}
+	return CallStack{f.Name(), file, lineno}
 }
 
 // Stack gets the call stack

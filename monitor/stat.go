@@ -1,12 +1,13 @@
 package monitor
 
 import (
-	"time"
+	"encoding/json"
 	"sync"
+	"sync/atomic"
+	"time"
+
 	"github.com/verystar/golib/logger"
 	"github.com/verystar/golib/redis"
-	"sync/atomic"
-	"encoding/json"
 )
 
 type RedisMonitor struct {

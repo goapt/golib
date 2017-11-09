@@ -1,15 +1,16 @@
 package httpclient
 
 import (
-	"io"
-	"time"
-	"net/url"
 	"fmt"
+	"io"
+	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
+	"time"
+
 	"github.com/verystar/golib/logger"
 	"github.com/verystar/golib/monitor"
-	"net/http"
 )
 
 const (
@@ -35,7 +36,7 @@ func NewClient(options ...func(*HttpClient)) *HttpClient {
 	return httpclient
 }
 
-func (this *HttpClient) Post(url string, contentType string, body io.Reader , options... func(r *http.Request)) (resp *http.Response, err error) {
+func (this *HttpClient) Post(url string, contentType string, body io.Reader, options ... func(r *http.Request)) (resp *http.Response, err error) {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
@@ -48,7 +49,7 @@ func (this *HttpClient) Post(url string, contentType string, body io.Reader , op
 	return this.Do(req)
 }
 
-func (this *HttpClient) Get(url string , options... func(r *http.Request)) (resp *http.Response, err error) {
+func (this *HttpClient) Get(url string, options ... func(r *http.Request)) (resp *http.Response, err error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err

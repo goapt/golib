@@ -1,11 +1,12 @@
 package logger
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/evalphobia/logrus_sentry"
-	"time"
-	"os"
 	"fmt"
+	"os"
+	"time"
+
+	"github.com/evalphobia/logrus_sentry"
+	"github.com/sirupsen/logrus"
 )
 
 type Config struct {
@@ -92,7 +93,7 @@ func NewLogger(options ...func(*Config)) ILogger {
 		})
 
 		if err != nil {
-			fmt.Println("NewLogger error" , err)
+			fmt.Println("NewLogger error", err)
 		}
 
 	} else {

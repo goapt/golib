@@ -4,9 +4,10 @@ import (
 	"log"
 	"os"
 	"strings"
+
 	gonsq "github.com/nsqio/go-nsq"
-	"github.com/verystar/nsqpool"
 	"github.com/verystar/golib/logger"
+	"github.com/verystar/nsqpool"
 )
 
 var (
