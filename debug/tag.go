@@ -16,7 +16,7 @@ import (
 type DebugTagData struct {
 	Key     string
 	Data    interface{}
-	Stack   callStack
+	Stack   CallStack
 	Current string
 }
 
