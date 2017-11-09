@@ -1,15 +1,16 @@
 package debug
 
 import (
-	"time"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/verystar/golib/color"
-	"strings"
-	"strconv"
-	"path/filepath"
 	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/verystar/golib/color"
 )
 
 type DebugTagData struct {
@@ -65,6 +66,12 @@ func (this *DebugTag) Tag(key string, data ...interface{}) {
 		Stack:   st,
 		Current: t,
 	})
+}
+
+func (this *DebugTag) Printer() {
+	fmt.Println(color.Blue("[Debug]") + " -------------------------> " + time.Now().Format("2006-01-02 15:04:05") + " <-------------------------")
+	buf, _ := json.MarshalIndent(this.data, "", "  ")
+	fmt.Println(color.Yellow(string(buf)))
 }
 
 func (this *DebugTag) GetTagData() []DebugTagData {
