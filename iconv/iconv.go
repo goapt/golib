@@ -11,20 +11,12 @@ import (
 
 func GbkToUtf8(s []byte) ([]byte, error) {
 	reader := GbkToUtf8Reader(bytes.NewReader(s))
-	d, e := ioutil.ReadAll(reader)
-	if e != nil {
-		return nil, e
-	}
-	return d, nil
+	return ioutil.ReadAll(reader)
 }
 
 func Utf8ToGbk(s []byte) ([]byte, error) {
 	reader := Utf8ToGbkReader(bytes.NewReader(s))
-	d, e := ioutil.ReadAll(reader)
-	if e != nil {
-		return nil, e
-	}
-	return d, nil
+	return ioutil.ReadAll(reader)
 }
 
 //return utf8
