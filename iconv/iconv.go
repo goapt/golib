@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 
 	"golang.org/x/text/encoding/simplifiedchinese"
@@ -24,4 +25,14 @@ func Utf8ToGbk(s []byte) ([]byte, error) {
 		return nil, e
 	}
 	return d, nil
+}
+
+//return utf8
+func GbkToUtf8Reader(s io.Reader) io.Reader {
+	return transform.NewReader(s, simplifiedchinese.GBK.NewDecoder())
+}
+
+//return gbk
+func Utf8ToGbkReader(s io.Reader) io.Reader {
+	return transform.NewReader(s, simplifiedchinese.GBK.NewEncoder())
 }
