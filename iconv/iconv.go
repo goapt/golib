@@ -10,7 +10,7 @@ import (
 )
 
 func GbkToUtf8(s []byte) ([]byte, error) {
-	reader := transform.NewReader(bytes.NewReader(s), simplifiedchinese.GBK.NewDecoder())
+	reader := GbkToUtf8Reader(bytes.NewReader(s))
 	d, e := ioutil.ReadAll(reader)
 	if e != nil {
 		return nil, e
@@ -19,7 +19,7 @@ func GbkToUtf8(s []byte) ([]byte, error) {
 }
 
 func Utf8ToGbk(s []byte) ([]byte, error) {
-	reader := transform.NewReader(bytes.NewReader(s), simplifiedchinese.GBK.NewEncoder())
+	reader := Utf8ToGbkReader(bytes.NewReader(s))
 	d, e := ioutil.ReadAll(reader)
 	if e != nil {
 		return nil, e
