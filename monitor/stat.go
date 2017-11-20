@@ -42,7 +42,7 @@ func (this *RedisMonitor) Run() {
 	for data := range this.data {
 		n := atomic.AddUint32(&count, 1)
 		if marshaledBytes, err = json.Marshal(data); err != nil {
-			return
+			continue
 		}
 		pipe.RPush("__stat__", string(marshaledBytes))
 		if n == 100 {
