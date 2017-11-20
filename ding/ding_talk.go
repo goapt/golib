@@ -1,11 +1,12 @@
 package ding
 
 import (
-	"io/ioutil"
-	"time"
-	"encoding/json"
 	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
+	"time"
+
 	"github.com/verystar/golib/logger"
 )
 
@@ -43,6 +44,11 @@ func Alarm(content string, at ...[]string) error {
 
 	url := "https://oapi.dingtalk.com/robot/send?access_token=" + DING_TALK_TOKEN
 	resp, err := PostJson(url, buf)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
 	if data, err := ioutil.ReadAll(resp.Body); err == nil {
 		dingtalk.paserResp(data)
 	}
@@ -51,7 +57,6 @@ func Alarm(content string, at ...[]string) error {
 		logger.Debug("alarm", err.Error())
 		return err
 	}
-	defer resp.Body.Close()
 	return nil
 }
 
