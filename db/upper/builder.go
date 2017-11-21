@@ -15,6 +15,18 @@ import (
 var _ db.IBuilder = (*Builder)(nil)
 var mapper = reflectx.NewMapper("db")
 
+var AUTO_CREATE_TIME_FIELDS = []string{
+	"create_time",
+	"create_at",
+	"created_at",
+}
+
+var AUTO_UPDATE_TIME_FIELDS = []string{
+	"update_time",
+	"update_at",
+	"updated_at",
+}
+
 type UpperDatabase interface {
 	upperdb.Database
 	sqlbuilder.SQLBuilder
@@ -107,11 +119,11 @@ func (b *Builder) Create(i interface{}) (int64, error) {
 	switch itemT.Kind() {
 	case reflect.Struct:
 		fields := mapper.FieldMap(itemV)
-		structAutoTime(fields, []string{"create_time", "create_at"})
+		structAutoTime(fields, AUTO_CREATE_TIME_FIELDS)
 	case reflect.Map:
 		cols, err := b.Cloumns()
 		if err == nil {
-			i = mapAutoTime(i, cols, []string{"create_time", "create_at"})
+			i = mapAutoTime(i, cols, AUTO_CREATE_TIME_FIELDS)
 		}
 	}
 
@@ -145,12 +157,12 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 	switch itemT.Kind() {
 	case reflect.Struct:
 		fields := mapper.FieldMap(itemV)
-		structAutoTime(fields, []string{"update_time", "update_at"})
+		structAutoTime(fields, AUTO_UPDATE_TIME_FIELDS)
 		i = zeroValueFilter(fields, zv)
 	case reflect.Map:
 		cols, err := b.Cloumns()
 		if err == nil {
-			i = mapAutoTime(i, cols, []string{"update_time", "update_at"})
+			i = mapAutoTime(i, cols, AUTO_UPDATE_TIME_FIELDS)
 		}
 	}
 
