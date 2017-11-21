@@ -121,7 +121,7 @@ func (b *Builder) Create(i interface{}) (int64, error) {
 		fields := mapper.FieldMap(itemV)
 		structAutoTime(fields, AUTO_CREATE_TIME_FIELDS)
 	case reflect.Map:
-		cols, err := b.Cloumns()
+		cols, err := b.Columns()
 		if err == nil {
 			i = mapAutoTime(i, cols, AUTO_CREATE_TIME_FIELDS)
 		}
@@ -160,7 +160,7 @@ func (b *Builder) Update(i interface{}, zeroValues ...[]string) (int64, error) {
 		structAutoTime(fields, AUTO_UPDATE_TIME_FIELDS)
 		i = zeroValueFilter(fields, zv)
 	case reflect.Map:
-		cols, err := b.Cloumns()
+		cols, err := b.Columns()
 		if err == nil {
 			i = mapAutoTime(i, cols, AUTO_UPDATE_TIME_FIELDS)
 		}
@@ -181,9 +181,9 @@ func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	return b
 }
 
-func (b *Builder) Cloumns() (clms []string, err error) {
+func (b *Builder) Columns() (clms []string, err error) {
 
-	h := cache.String("cloumns_" + b.db.Name() + "_" + b.collection.Name())
+	h := cache.String("columns_" + b.db.Name() + "_" + b.collection.Name())
 
 	ccol, ok := b.cacheColumns.ReadRaw(h)
 	if ok {
