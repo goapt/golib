@@ -26,6 +26,8 @@ type IBuilder interface {
 	Exec(sql string,args ...interface{}) (sql.Result, error)
 	//原生查询
 	Query(i interface{}, sql string,args... interface{}) error
+	//原生查询一条
+	QueryRow(i interface{}, sql string,args... interface{}) error
 	//查询多条
 	All(i interface{}) error
 	//统计

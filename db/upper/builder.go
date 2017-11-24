@@ -93,13 +93,21 @@ func (b *Builder) Exec(sql string, args ...interface{}) (sql.Result, error) {
 }
 
 func (b *Builder) Query(i interface{}, sql string, param ... interface{}) error {
-	rows, err := b.db.Query(sql, param...)
-	if err != nil {
+	iter := b.db.Iterator(sql, param...)
+	if err := iter.Err(); err != nil {
 		return err
 	}
-
-	iter := sqlbuilder.NewIterator(rows)
+	defer iter.Close()
 	return iter.All(i)
+}
+
+func (b *Builder) QueryRow(i interface{}, sql string, param ... interface{}) error {
+	iter := b.db.Iterator(sql, param...)
+	if err := iter.Err(); err != nil {
+		return err
+	}
+	defer iter.Close()
+	return iter.One(i)
 }
 
 func (b *Builder) All(i interface{}) error {
