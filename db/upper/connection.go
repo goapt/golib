@@ -3,11 +3,11 @@ package upper
 import (
 	"strings"
 
+	"github.com/verystar/db/lib/sqlbuilder"
+	"github.com/verystar/db/mysql"
 	"github.com/verystar/golib/cache"
 	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/logger"
-	"upper.io/db.v3/lib/sqlbuilder"
-	"upper.io/db.v3/mysql"
 )
 
 type Database struct {

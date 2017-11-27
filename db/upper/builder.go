@@ -5,11 +5,11 @@ import (
 	"reflect"
 	"time"
 
+	upperdb "github.com/verystar/db"
+	"github.com/verystar/db/lib/reflectx"
+	"github.com/verystar/db/lib/sqlbuilder"
 	"github.com/verystar/golib/cache"
 	"github.com/verystar/golib/db"
-	upperdb "upper.io/db.v3"
-	"upper.io/db.v3/lib/reflectx"
-	"upper.io/db.v3/lib/sqlbuilder"
 )
 
 var _ db.IBuilder = (*Builder)(nil)
