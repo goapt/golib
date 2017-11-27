@@ -19,6 +19,9 @@ var AUTO_CREATE_TIME_FIELDS = []string{
 	"create_time",
 	"create_at",
 	"created_at",
+	"update_time",
+	"update_at",
+	"updated_at",
 }
 
 var AUTO_UPDATE_TIME_FIELDS = []string{
