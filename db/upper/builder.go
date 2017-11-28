@@ -203,7 +203,7 @@ func (b *Builder) Columns() (clms []string, err error) {
 
 	q := b.db.Select("column_name").
 		From("information_schema.columns").
-		Where("table_schema = ? AND table_name = ?", b.db.Name(), b.collection.Name())
+		Where("table_schema = '" + b.db.Name() + "' AND table_name = '" + b.collection.Name() + "'")
 
 	iter := q.Iterator()
 	defer iter.Close()
