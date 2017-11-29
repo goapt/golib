@@ -62,6 +62,14 @@ func init() {
 	}()
 }
 
+func DefaultLogger(options ...func(*Config)) {
+	for _, option := range options {
+		option(defaultConfig)
+	}
+
+	std = NewLogger(options...)
+}
+
 func NewLogger(options ...func(*Config)) ILogger {
 	conf := *defaultConfig
 
