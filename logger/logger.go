@@ -32,14 +32,34 @@ func init() {
 		LogLevel: "info",
 	}
 	std = NewLogger()
-}
+	logchan = make(chan *logdata, 100)
 
-func DefaultLogger(options ...func(*Config)) {
-	for _, option := range options {
-		option(defaultConfig)
-	}
+	go func() {
+		logs := make(map[string]ILogger, 0)
+		prevDate := ""
+		for l := range logchan {
+			d := time.Now().Format("2006-01-02")
+			key := l.log.conf.LogPath + l.log.conf.LogName
+			log, ok := logs[key]
 
-	std = NewLogger(options...)
+			if !ok || d != prevDate {
+				prevDate = d
+				log = newLogger(l.log.conf, d)
+				logs[key] = log
+			}
+
+			switch l.level {
+			case LevelDebug:
+				log.Debug(l.format, l.args...)
+			case LevelInfo:
+				log.Info(l.format, l.args...)
+			case LevelError:
+				log.Error(l.format, l.args...)
+			case LevelFatal:
+				log.Fatal(l.format, l.args...)
+			}
+		}
+	}()
 }
 
 func NewLogger(options ...func(*Config)) ILogger {
@@ -49,11 +69,13 @@ func NewLogger(options ...func(*Config)) ILogger {
 		option(&conf)
 	}
 
-	var log ILogger
+	return NewChanLogger(&conf)
+}
 
+func newLogger(conf *Config, d string) ILogger {
+	var log ILogger
 	if conf.LogMode == "file" {
 		var err error
-		d := time.Now().Format("2006-01-02")
 		if conf.LogMaxFiles > 0 {
 			delDate := time.Now().AddDate(0, 0, -conf.LogMaxFiles).Format("2006-01-02")
 			os.Remove(conf.LogPath + conf.LogName + "-" + delDate + ".log")

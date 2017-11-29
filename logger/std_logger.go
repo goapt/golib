@@ -2,6 +2,7 @@ package logger
 
 import (
 	"log"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,7 +23,6 @@ func (l *StdLogger) Debug(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
 
-
 func (l *StdLogger) Info(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
@@ -31,6 +31,6 @@ func (l *StdLogger) Error(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
 
-func (l *StdLogger) SetFormatter (format logrus.Formatter) {
+func (l *StdLogger) SetFormatter(format logrus.Formatter) {
 
 }
