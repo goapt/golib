@@ -23,6 +23,7 @@ func MustDB(name ...string) *Database {
 	if len(name) == 0 {
 		return dbService["default"]
 	}
+
 	engine, ok := dbService[name[0]]
 	if !ok {
 		logger.Fatal("[db] the database link `%s` is not configured", name[0])

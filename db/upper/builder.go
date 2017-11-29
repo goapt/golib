@@ -92,7 +92,7 @@ func (b *Builder) Get(i interface{}) (bool, error) {
 }
 
 func (b *Builder) Exec(sql string, args ...interface{}) (sql.Result, error) {
-	return b.db.Exec(sql, args)
+	return b.db.Exec(sql, args...)
 }
 
 func (b *Builder) Query(i interface{}, sql string, param ... interface{}) error {
