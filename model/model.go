@@ -6,7 +6,14 @@ import (
 	"fmt"
 	"database/sql"
 	"strings"
+	"reflect"
 )
+
+type ModelRefect struct {
+	Fields []string
+}
+
+var modelRefectCache  = make(map[string] *ModelRefect, 0)
 
 type Query struct {
 	db.IBuilder
@@ -20,6 +27,8 @@ type IQuery interface {
 	Replace(data map[string]interface{}) (sql.Result , error)
 	BatchReplace(keys []string , data [][]interface{}) (sql.Result , error)
 	BatchInsert(keys []string , data [][]interface{}) (sql.Result , error)
+	GetModelRefect() *ModelRefect
+	GetModel() db.IModel
 }
 
 func Builder(m db.IModel) db.IBuilder {
@@ -31,6 +40,29 @@ func NewQuery(m db.IModel) IQuery {
 		IBuilder: Builder(m),
 		IModel:m,
 	}
+}
+
+func (q *Query ) GetModel() db.IModel {
+	return q.IModel
+}
+func (q *Query)GetModelRefect() *ModelRefect {
+	t := reflect.TypeOf(q.IModel).Elem()
+	key := q.DbName() + ":" + q.TableName()
+	ref , ok := modelRefectCache[key]
+	if ok {
+		return  ref
+	}
+
+	ref = &ModelRefect{}
+	for i := 0 ; i < t.NumField() ; i++ {
+		f := t.Field(i).Tag.Get("db")
+		if f == "-" {
+			continue
+		}
+		ref.Fields = append(ref.Fields , f)
+	}
+	modelRefectCache[key] = ref
+	return ref
 }
 
 func (q *Query) GetByWhere(i interface{}, query string, arg interface{}, args ...interface{}) (bool, error) {

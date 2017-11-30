@@ -7,6 +7,7 @@ import (
 type IModel interface {
 	TableName() string
 	DbName() string
+	PK() string
 }
 
 type IBuilder interface {
