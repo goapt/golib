@@ -10,7 +10,6 @@ import (
 	"github.com/verystar/golib/logger"
 )
 
-//update
 var DING_TALK_TOKEN string
 
 type DingTalkRequest struct {
