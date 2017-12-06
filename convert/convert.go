@@ -3,6 +3,7 @@ package convert
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -52,7 +53,11 @@ func (f StrTo) Time(fm ...string) (time.Time, error) {
 	if len(fm) > 0 {
 		format = fm[0]
 	} else {
-		format = "2006-01-02 15:04:05"
+		if strings.IndexRune(f.String(), 'T') == -1 {
+			format = "2006-01-02 15:04:05"
+		} else {
+			format = time.RFC3339
+		}
 	}
 
 	v, err := time.Parse(format, f.String())
