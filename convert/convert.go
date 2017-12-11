@@ -28,6 +28,29 @@ func (f StrTo) Exist() bool {
 	return string(f) != string(0x1E)
 }
 
+func (f StrTo) Int() (int, error) {
+	v, err := strconv.ParseInt(f.String(), 10, 0)
+	return int(v), err
+}
+
+func (f StrTo) Int8() (int8, error) {
+	v, err := strconv.ParseInt(f.String(), 10, 8)
+	return int8(v), err
+}
+func (f StrTo) Int16() (int16, error) {
+	v, err := strconv.ParseInt(f.String(), 10, 16)
+	return int16(v), err
+}
+func (f StrTo) Int32() (int32, error) {
+	v, err := strconv.ParseInt(f.String(), 10, 32)
+	return int32(v), err
+}
+
+func (f StrTo) Int64() (int64, error) {
+	v, err := strconv.ParseInt(f.String(), 10, 64)
+	return int64(v), err
+}
+
 func (f StrTo) Uint() (uint, error) {
 	v, err := strconv.ParseUint(f.String(), 10, 0)
 	return uint(v), err
@@ -38,14 +61,19 @@ func (f StrTo) Uint8() (uint8, error) {
 	return uint8(v), err
 }
 
-func (f StrTo) Int() (int, error) {
-	v, err := strconv.ParseInt(f.String(), 10, 0)
-	return int(v), err
+func (f StrTo) Uint16() (uint16, error) {
+	v, err := strconv.ParseUint(f.String(), 10, 16)
+	return uint16(v), err
 }
 
-func (f StrTo) Int64() (int64, error) {
+func (f StrTo) Uint32() (uint32, error) {
+	v, err := strconv.ParseUint(f.String(), 10, 32)
+	return uint32(v), err
+}
+
+func (f StrTo) Uint64() (uint64, error) {
 	v, err := strconv.ParseInt(f.String(), 10, 64)
-	return int64(v), err
+	return uint64(v), err
 }
 
 func (f StrTo) Time(fm ...string) (time.Time, error) {
@@ -79,8 +107,18 @@ func (f StrTo) MustInt() int {
 	return v
 }
 
+func (f StrTo) MustUint() uint {
+	v, _ := f.Uint()
+	return v
+}
+
 func (f StrTo) MustInt64() int64 {
 	v, _ := f.Int64()
+	return v
+}
+
+func (f StrTo) MustUint64() uint64 {
+	v, _ := f.Uint64()
 	return v
 }
 
