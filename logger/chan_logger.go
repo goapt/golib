@@ -1,6 +1,8 @@
 package logger
 
 import (
+	"regexp"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -58,6 +60,33 @@ func (l *ChanLogger) Error(format string, args ...interface{}) {
 		level:  LevelError,
 		format: format,
 		args:   args,
+	}
+}
+
+
+func (l *ChanLogger) Log(level string, format string, args ...interface{}) {
+	switch level {
+	case "debug":
+		l.Debug(format, args...)
+	case "info":
+		l.Info(format, args...)
+	case "error":
+		l.Error(format, args...)
+	case "fatal":
+		l.Fatal(format, args...)
+	default:
+		l.Error(format, args...)
+	}
+}
+
+func (l *ChanLogger) Compile(format string, args ...interface{}) {
+	r, _ := regexp.Compile(`^<(debug|info|error|fatal)>(.*)`)
+	match := r.FindStringSubmatch(format)
+
+	if len(match) > 2 {
+		l.Log(match[1], format, args...)
+	} else {
+		l.Error(format, args...)
 	}
 }
 

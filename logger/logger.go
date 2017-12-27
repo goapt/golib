@@ -147,3 +147,11 @@ func Error(str string, args ...interface{}) {
 func Fatal(str string, args ...interface{}) {
 	std.Fatal(str, args...)
 }
+
+func Log(level string, str string, args ...interface{}) {
+	std.Log(level, str, args...)
+}
+
+func Compile(str string, args ...interface{}) {
+	std.Compile(str, args...)
+}

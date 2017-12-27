@@ -31,6 +31,14 @@ func (l *StdLogger) Error(format string, args ...interface{}) {
 	log.Printf(format, args...)
 }
 
+func (l *StdLogger) Log(level string, format string, args ...interface{}) {
+	log.Printf(format, args...)
+}
+
+func (l *StdLogger) Compile(format string, args ...interface{}) {
+	log.Printf(format, args...)
+}
+
 func (l *StdLogger) SetFormatter(format logrus.Formatter) {
 
 }
