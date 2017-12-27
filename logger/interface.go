@@ -20,6 +20,5 @@ type ILogger interface {
 	Info(string, ...interface{})
 	Error(string, ...interface{})
 	Log(string, string, ...interface{})
-	Compile(string, ...interface{})
 	SetFormatter(format logrus.Formatter)
 }

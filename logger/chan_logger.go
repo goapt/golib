@@ -1,8 +1,6 @@
 package logger
 
 import (
-	"regexp"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -12,7 +10,7 @@ type logdata struct {
 	log    *ChanLogger
 	level  string
 	format string
-	args []interface {}
+	args   []interface{}
 }
 
 var logchan chan *logdata
@@ -63,7 +61,6 @@ func (l *ChanLogger) Error(format string, args ...interface{}) {
 	}
 }
 
-
 func (l *ChanLogger) Log(level string, format string, args ...interface{}) {
 	switch level {
 	case "debug":
@@ -75,17 +72,6 @@ func (l *ChanLogger) Log(level string, format string, args ...interface{}) {
 	case "fatal":
 		l.Fatal(format, args...)
 	default:
-		l.Error(format, args...)
-	}
-}
-
-func (l *ChanLogger) Compile(format string, args ...interface{}) {
-	r, _ := regexp.Compile(`^<(debug|info|error|fatal)>(.*)`)
-	match := r.FindStringSubmatch(format)
-
-	if len(match) > 2 {
-		l.Log(match[1], format, args...)
-	} else {
 		l.Error(format, args...)
 	}
 }

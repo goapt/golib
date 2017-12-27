@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/evalphobia/logrus_sentry"
@@ -152,6 +153,13 @@ func Log(level string, str string, args ...interface{}) {
 	std.Log(level, str, args...)
 }
 
-func Compile(str string, args ...interface{}) {
-	std.Compile(str, args...)
+func Compile(format string) string {
+	r, _ := regexp.Compile(`^<(debug|info|error|fatal)>(.*)`)
+	match := r.FindStringSubmatch(format)
+
+	if len(match) > 2 {
+		return match[1]
+	} else {
+		return "error"
+	}
 }
