@@ -73,6 +73,21 @@ func (l *FileLogger) Fatal(format string, args ...interface{}) {
 	}).Fatalf(format, args...)
 }
 
+func (l *FileLogger) Log(level string, format string, args ...interface{}) {
+	switch level {
+	case "debug":
+		l.Debug(format, args...)
+	case "info":
+		l.Info(format, args...)
+	case "error":
+		l.Error(format, args...)
+	case "fatal":
+		l.Fatal(format, args...)
+	default:
+		l.Error(format, args...)
+	}
+}
+
 func (l *FileLogger) SetFormatter(format logrus.Formatter) {
 	l.Formatter = format
 }
