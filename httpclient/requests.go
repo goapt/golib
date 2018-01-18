@@ -38,7 +38,7 @@ func NewClient(options ...func(*HttpClient)) *HttpClient {
 	return httpclient
 }
 
-func (this *HttpClient) Post(url string, contentType string, body io.Reader, options ... func(r *http.Request)) (resp *http.Response, err error) {
+func (h *HttpClient) Post(url string, contentType string, body io.Reader, options ... func(r *http.Request)) (resp *http.Response, err error) {
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, err
@@ -48,10 +48,10 @@ func (this *HttpClient) Post(url string, contentType string, body io.Reader, opt
 	for _, option := range options {
 		option(req)
 	}
-	return this.Do(req)
+	return h.Do(req)
 }
 
-func (this *HttpClient) Get(url string, options ... func(r *http.Request)) (resp *http.Response, err error) {
+func (h *HttpClient) Get(url string, options ... func(r *http.Request)) (resp *http.Response, err error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -59,13 +59,13 @@ func (this *HttpClient) Get(url string, options ... func(r *http.Request)) (resp
 	for _, option := range options {
 		option(req)
 	}
-	return this.Do(req)
+	return h.Do(req)
 }
 
-func (this *HttpClient) Do(req *http.Request) (resp *http.Response, err error) {
+func (h *HttpClient) Do(req *http.Request) (resp *http.Response, err error) {
 	start := time.Now()
-	rep, err := this.Client.Do(req)
-	if this.OpenMonitor {
+	rep, err := h.Client.Do(req)
+	if h.OpenMonitor {
 		monitorPush(start, req.URL.String(), rep, err)
 	}
 	return rep, err

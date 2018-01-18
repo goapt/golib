@@ -33,51 +33,51 @@ func NewNsqHandler(options ... func(*NsqHandler)) *NsqHandler {
 	return handler
 }
 
-func (this *NsqHandler) GetTopic() string {
-	return this.Topic
+func (h *NsqHandler) GetTopic() string {
+	return h.Topic
 }
 
-func (this *NsqHandler) IsOpenChannelTopic() bool {
-	return this.OpenChannelTopic
+func (h *NsqHandler) IsOpenChannelTopic() bool {
+	return h.OpenChannelTopic
 }
 
-func (this *NsqHandler) GetChannelTopic() string {
-	return this.Topic + "." + this.Channel
+func (h *NsqHandler) GetChannelTopic() string {
+	return h.Topic + "." + h.Channel
 }
 
-func (this *NsqHandler) GetChannel() string {
-	return this.Channel
+func (h *NsqHandler) GetChannel() string {
+	return h.Channel
 }
 
-func (this *NsqHandler) SetHandle(fn HandleFunc) {
-	this.Handler = fn
+func (h *NsqHandler) SetHandle(fn HandleFunc) {
+	h.Handler = fn
 }
 
-func (this *NsqHandler) GetHandle() HandleFunc {
-	return this.Handler
+func (h *NsqHandler) GetHandle() HandleFunc {
+	return h.Handler
 }
 
-func (this *NsqHandler) GetMaxAttepts() uint16 {
-	if this.MaxAttepts == 0 {
-		this.MaxAttepts = 100
+func (h *NsqHandler) GetMaxAttepts() uint16 {
+	if h.MaxAttepts == 0 {
+		h.MaxAttepts = 100
 	}
-	return this.MaxAttepts
+	return h.MaxAttepts
 }
 
-func (this *NsqHandler) SetShouldRequeue(fn func(message *nsq.Message) (bool, time.Duration)) {
-	this.shouldRequeue = fn
+func (h *NsqHandler) SetShouldRequeue(fn func(message *nsq.Message) (bool, time.Duration)) {
+	h.shouldRequeue = fn
 }
 
-func (this *NsqHandler) GetShouldRequeue(message *nsq.Message) (bool, time.Duration) {
-	if this.shouldRequeue == nil {
+func (h *NsqHandler) GetShouldRequeue(message *nsq.Message) (bool, time.Duration) {
+	if h.shouldRequeue == nil {
 		return delay.DefaultDelay(message)
 	}
 
-	return this.shouldRequeue(message)
+	return h.shouldRequeue(message)
 }
 
-func (this *NsqHandler) Group(group string) {
-	NsqGroups[group] = append(NsqGroups[group], this)
+func (h *NsqHandler) Group(group string) {
+	NsqGroups[group] = append(NsqGroups[group], h)
 }
 
 func (h *NsqHandler) GetSize() int {

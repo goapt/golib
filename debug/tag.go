@@ -36,20 +36,20 @@ func NewDebugTag(options ...func(*DebugTag)) *DebugTag {
 	return debug
 }
 
-func (this *DebugTag) Start() {
+func (d *DebugTag) Start() {
 	if debugFlag == "off" {
 		return
 	}
-	this.t = time.Now()
+	d.t = time.Now()
 }
 
-func (this *DebugTag) Tag(key string, data ...interface{}) {
+func (d *DebugTag) Tag(key string, data ...interface{}) {
 	if debugFlag == "off" {
 		return
 	}
 
 	st := Callstack(2)
-	t := time.Now().Sub(this.t).String()
+	t := time.Now().Sub(d.t).String()
 
 	if printTag == "" || strings.Contains(key, printTag) {
 		fmt.Println(color.Blue("[Debug Tag]("+t+")") + " -------------------------> " + key + " <-------------------------")
@@ -60,7 +60,7 @@ func (this *DebugTag) Tag(key string, data ...interface{}) {
 		}
 	}
 
-	this.data = append(this.data, DebugTagData{
+	d.data = append(d.data, DebugTagData{
 		Key:     key,
 		Data:    data,
 		Stack:   st,
@@ -68,17 +68,17 @@ func (this *DebugTag) Tag(key string, data ...interface{}) {
 	})
 }
 
-func (this *DebugTag) Printer() {
+func (d *DebugTag) Printer() {
 	fmt.Println(color.Blue("[Debug]") + " -------------------------> " + time.Now().Format("2006-01-02 15:04:05") + " <-------------------------")
-	buf, _ := json.MarshalIndent(this.data, "", "  ")
+	buf, _ := json.MarshalIndent(d.data, "", "  ")
 	fmt.Println(color.Yellow(string(buf)))
 }
 
-func (this *DebugTag) GetTagData() []DebugTagData {
-	return this.data
+func (d *DebugTag) GetTagData() []DebugTagData {
+	return d.data
 }
 
-func (this *DebugTag) Save(dir string, format string, prefix ...string) error {
+func (d *DebugTag) Save(dir string, format string, prefix ...string) error {
 	pre := ""
 	if len(prefix) > 0 {
 		pre = prefix[0] + "_"
@@ -90,8 +90,8 @@ func (this *DebugTag) Save(dir string, format string, prefix ...string) error {
 	now := time.Now()
 	s := now.Format(format)
 	filename := strings.TrimRight(savePath, "/") + "/" + dir + "/" + pre + s + ".log"
-	//buf , err := json.Marshal(this.data)
-	buf, err := json.MarshalIndent(this.data, "", "    ")
+	//buf , err := json.Marshal(d.data)
+	buf, err := json.MarshalIndent(d.data, "", "    ")
 	if err != nil {
 		return err
 	}
@@ -118,20 +118,20 @@ func writeToFile(filename string, text []byte) error {
 	return nil
 }
 
-func (this *DebugTag) SaveToSecond(dir string, prefix ...string) error {
-	return this.Save(dir, "2006-01-02-15-04-05", prefix...)
+func (d *DebugTag) SaveToSecond(dir string, prefix ...string) error {
+	return d.Save(dir, "2006-01-02-15-04-05", prefix...)
 }
 
-func (this *DebugTag) SaveToMinute(dir string, prefix ...string) error {
-	return this.Save(dir, "2006-01-02-15-04", prefix...)
+func (d *DebugTag) SaveToMinute(dir string, prefix ...string) error {
+	return d.Save(dir, "2006-01-02-15-04", prefix...)
 }
 
-func (this *DebugTag) SaveToHour(dir string, prefix ...string) error {
-	return this.Save(dir, "2006-01-02-15", prefix...)
+func (d *DebugTag) SaveToHour(dir string, prefix ...string) error {
+	return d.Save(dir, "2006-01-02-15", prefix...)
 }
 
-func (this *DebugTag) SaveToDay(dir string, prefix ...string) error {
-	return this.Save(dir, "2006-01-02", prefix...)
+func (d *DebugTag) SaveToDay(dir string, prefix ...string) error {
+	return d.Save(dir, "2006-01-02", prefix...)
 }
 
 var tagChan chan *tagData

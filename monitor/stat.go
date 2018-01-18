@@ -28,7 +28,7 @@ func NewRedisMonitor(dbPrefix string) *RedisMonitor {
 	return redisMonitor
 }
 
-func (this *RedisMonitor) Run() {
+func (m *RedisMonitor) Run() {
 	var err error
 	var marshaledBytes []byte
 
@@ -39,7 +39,7 @@ func (this *RedisMonitor) Run() {
 	}
 	var count uint32
 	pipe := client.Pipeline()
-	for data := range this.data {
+	for data := range m.data {
 		n := atomic.AddUint32(&count, 1)
 		if marshaledBytes, err = json.Marshal(data); err != nil {
 			continue

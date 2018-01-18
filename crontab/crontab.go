@@ -36,20 +36,20 @@ func NewCrontab(options ... func(*Crontab)) *Crontab {
 	return cron
 }
 
-func (this *Crontab) GetName() string {
-	return this.Name
+func (c *Crontab) GetName() string {
+	return c.Name
 }
 
-func (this *Crontab) SetHandle(fn func(ctx interface{})) {
-	this.handler = fn
+func (c *Crontab) SetHandle(fn func(ctx interface{})) {
+	c.handler = fn
 }
 
-func (this *Crontab) GetHandle() func(ctx interface{}) {
-	return this.handler
+func (c *Crontab) GetHandle() func(ctx interface{}) {
+	return c.handler
 }
 
-func (this *Crontab) IsDue(currentDate time.Time) bool {
-	descriptor := this.Date
+func (c *Crontab) IsDue(currentDate time.Time) bool {
+	descriptor := c.Date
 
 	if descriptor == "" {
 		return false

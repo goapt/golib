@@ -16,19 +16,19 @@ type TaskPool struct {
 	handler func(*TaskPool)
 }
 
-func (this *TaskPool)Add(i int)  {
-	this.pool <- true
-	this.wg.Add(i)
+func (t *TaskPool)Add(i int)  {
+	t.pool <- true
+	t.wg.Add(i)
 }
 
-func (this *TaskPool)Done()  {
-	<-this.pool
-	this.wg.Done()
+func (t *TaskPool)Done()  {
+	<-t.pool
+	t.wg.Done()
 }
 
 
-func (this *TaskPool)Run()  {
-	this.handler(this)
-	this.wg.Wait()
-	close(this.pool)
+func (t *TaskPool)Run()  {
+	t.handler(t)
+	t.wg.Wait()
+	close(t.pool)
 }

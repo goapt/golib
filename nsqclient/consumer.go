@@ -38,27 +38,27 @@ func NewNsqConsumer(ctx context.Context, topic, channel string, options ...func(
 	}, nil
 }
 
-func (this *NsqConsumer) AddHandler(handler nsq.Handler) {
-	this.Handlers = append(this.Handlers, handler)
+func (n *NsqConsumer) AddHandler(handler nsq.Handler) {
+	n.Handlers = append(n.Handlers, handler)
 }
 
-func (this *NsqConsumer) Run(conf Config) {
-	if len(this.Handlers) == 0 {
+func (n *NsqConsumer) Run(conf Config) {
+	if len(n.Handlers) == 0 {
 		errors.New("Handler Is Empty")
 	}
-	for _, handler := range this.Handlers {
-		this.Consumer.AddHandler(handler)
+	for _, handler := range n.Handlers {
+		n.Consumer.AddHandler(handler)
 	}
-	if err := this.Consumer.ConnectToNSQD(conf.Host + ":" + conf.Port); err != nil {
+	if err := n.Consumer.ConnectToNSQD(conf.Host + ":" + conf.Port); err != nil {
 		logger.Error("nsq:ConnectToNSQD", err)
 		return
 	}
 	for {
 		select {
-		case <-this.ctx.Done():
-			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer", this.topic, this.channel))
-			this.Consumer.Stop()
-			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer success", this.topic, this.channel))
+		case <-n.ctx.Done():
+			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer", n.topic, n.channel))
+			n.Consumer.Stop()
+			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer success", n.topic, n.channel))
 			return
 		}
 	}
