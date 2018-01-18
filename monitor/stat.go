@@ -57,24 +57,22 @@ func (m *RedisMonitor) Run() {
 
 func FormatTime(diff_time float64) string {
 	var diff_time_str string
-	if diff_time < 0.01 {
-		diff_time_str = "0.00s到0.01s"
-	} else if diff_time < 0.02 {
-		diff_time_str = "0.01s到0.02s"
-	} else if diff_time < 0.03 {
-		diff_time_str = "0.02s到0.03s"
-	} else if diff_time < 0.04 {
-		diff_time_str = "0.03s到0.04s"
-	} else if diff_time < 0.05 {
-		diff_time_str = "0.04s到0.05s"
+	if diff_time < 0.05 {
+		diff_time_str = "0.00s到0.05s"
 	} else if diff_time < 0.1 {
-		diff_time_str = "0.05s0.1s"
+		diff_time_str = "0.05s到0.1s"
 	} else if diff_time < 0.5 {
 		diff_time_str = "0.1s到0.5s"
 	} else if diff_time < 1 {
 		diff_time_str = "0.5s到1s"
+	} else if diff_time < 2 {
+		diff_time_str = "1s到2s"
+	} else if diff_time < 3 {
+		diff_time_str = "2s到3s"
+	} else if diff_time < 4 {
+		diff_time_str = "3s到4s"
 	} else if diff_time < 5 {
-		diff_time_str = "1s到5s"
+		diff_time_str = "4s到5s"
 	} else if diff_time < 10 {
 		diff_time_str = "5s到10s"
 	} else {
