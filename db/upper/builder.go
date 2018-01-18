@@ -65,17 +65,17 @@ func (b *Builder) Where(w ...interface{}) db.IBuilder {
 }
 
 func (b *Builder) Limit(i int) db.IBuilder {
-	b.where.Limit(i)
+	b.where = b.where.Limit(i)
 	return b
 }
 
 func (b *Builder) Offset(i int) db.IBuilder {
-	b.where.Offset(i)
+	b.where = b.where.Offset(i)
 	return b
 }
 
 func (b *Builder) OrderBy(s string) db.IBuilder {
-	b.where.OrderBy(s)
+	b.where = b.where.OrderBy(s)
 	return b
 }
 
