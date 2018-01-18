@@ -83,6 +83,10 @@ func FormatTime(diff_time float64) string {
 }
 
 func Stat(num int64, v1, v2, v3 string) {
+	if redisMonitor.data != nil {
+		return
+	}
+
 	if num < 0 || v1 == "" || v2 == "" || v3 == "" {
 		return
 	}

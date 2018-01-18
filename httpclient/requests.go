@@ -21,13 +21,11 @@ const (
 
 type HttpClient struct {
 	*http.Client
-	OpenMonitor bool
 }
 
 func NewClient(options ...func(*HttpClient)) *HttpClient {
 	httpclient := &HttpClient{
 		&http.Client{},
-		true,
 	}
 	httpclient.Client.Timeout = 5 * time.Second
 	// Apply options in the parameters to request.
@@ -65,9 +63,8 @@ func (h *HttpClient) Get(url string, options ... func(r *http.Request)) (resp *h
 func (h *HttpClient) Do(req *http.Request) (resp *http.Response, err error) {
 	start := time.Now()
 	rep, err := h.Client.Do(req)
-	if h.OpenMonitor {
-		monitorPush(start, req.URL.String(), rep, err)
-	}
+
+	monitorPush(start, req.URL.String(), rep, err)
 	return rep, err
 }
 
