@@ -133,3 +133,33 @@ func (this *DebugTag) SaveToHour(dir string, prefix ...string) error {
 func (this *DebugTag) SaveToDay(dir string, prefix ...string) error {
 	return this.Save(dir, "2006-01-02", prefix...)
 }
+
+var tagChan chan *tagData
+
+func init() {
+	tagChan = make(chan *tagData, 100)
+	go func() {
+		for t := range tagChan {
+			tag(t.Key, t.Data...)
+		}
+	}()
+}
+
+type tagData struct {
+	Key  string
+	Data []interface{}
+}
+
+func Tag(key string, data ...interface{}) {
+	tagChan <- &tagData{Key: key, Data: data}
+}
+
+func tag(key string, data ...interface{}) {
+	st := Callstack(2)
+	fmt.Println(color.Green("[Tag](%v) -------------------------> %s <-------------------------", time.Now().Format("2006-01-02 15:04:05"), key))
+	fmt.Println(color.Green("File:%s, Func:%s, Line:%v", st.File, st.Func, st.LineNo))
+	if len(data) > 0 {
+		format := strings.Repeat("===> %v\n", len(data))
+		fmt.Println(color.Yellow(format, data...))
+	}
+}

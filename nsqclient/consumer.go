@@ -1,31 +1,32 @@
-package nsq
+package nsqclient
 
 import (
-	gonsq "github.com/nsqio/go-nsq"
-	"github.com/pkg/errors"
 	"context"
-	"github.com/verystar/golib/logger"
 	"fmt"
+
+	"github.com/nsqio/go-nsq"
+	"github.com/pkg/errors"
 	"github.com/verystar/golib/color"
+	"github.com/verystar/golib/logger"
 )
 
 type NsqConsumer struct {
-	Consumer *gonsq.Consumer
-	Handlers []gonsq.Handler
+	Consumer *nsq.Consumer
+	Handlers []nsq.Handler
 	ctx      context.Context
 	topic    string
 	channel  string
 }
 
-func NewNsqConsumer(ctx context.Context, topic, channel string, options ...func(*gonsq.Config)) (*NsqConsumer, error) {
-	conf := gonsq.NewConfig()
+func NewNsqConsumer(ctx context.Context, topic, channel string, options ...func(*nsq.Config)) (*NsqConsumer, error) {
+	conf := nsq.NewConfig()
 	conf.MaxAttempts = 0
 
 	for _, option := range options {
 		option(conf)
 	}
 
-	consumer, err := gonsq.NewConsumer(topic, channel, conf)
+	consumer, err := nsq.NewConsumer(topic, channel, conf)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +38,7 @@ func NewNsqConsumer(ctx context.Context, topic, channel string, options ...func(
 	}, nil
 }
 
-func (this *NsqConsumer) AddHandler(handler gonsq.Handler) {
+func (this *NsqConsumer) AddHandler(handler nsq.Handler) {
 	this.Handlers = append(this.Handlers, handler)
 }
 
@@ -55,9 +56,9 @@ func (this *NsqConsumer) Run(conf Config) {
 	for {
 		select {
 		case <-this.ctx.Done():
-			fmt.Println(color.Yellow("[%s] %s,%s","stop consumer", this.topic, this.channel))
+			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer", this.topic, this.channel))
 			this.Consumer.Stop()
-			fmt.Println(color.Yellow("[%s] %s,%s" , "stop consumer success", this.topic, this.channel))
+			fmt.Println(color.Yellow("[%s] %s,%s", "stop consumer success", this.topic, this.channel))
 			return
 		}
 	}

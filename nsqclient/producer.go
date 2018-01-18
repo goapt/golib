@@ -1,11 +1,12 @@
-package nsq
+package nsqclient
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strings"
 
-	gonsq "github.com/nsqio/go-nsq"
+	"github.com/nsqio/go-nsq"
 	"github.com/verystar/golib/logger"
 	"github.com/verystar/nsqpool"
 )
@@ -53,7 +54,7 @@ func Client(name ... string) (pool.Pool, bool) {
 
 // CreateNSQProducerPool create a nwq producer pool
 func NewProducerPool(addr string, initSize, maxSize int) (pool.Pool, error) {
-	factory := func() (*gonsq.Producer, error) {
+	factory := func() (*nsq.Producer, error) {
 		return NewProducer(addr)
 	}
 	nsqPool, err := pool.NewChannelPool(initSize, maxSize, factory)
@@ -64,12 +65,35 @@ func NewProducerPool(addr string, initSize, maxSize int) (pool.Pool, error) {
 }
 
 // CreateNSQProducer create nsq producer
-func NewProducer(addr string) (*gonsq.Producer, error) {
-	cfg := gonsq.NewConfig()
-	producer, err := gonsq.NewProducer(addr, cfg)
+func NewProducer(addr string) (*nsq.Producer, error) {
+	cfg := nsq.NewConfig()
+	producer, err := nsq.NewProducer(addr, cfg)
 	if err != nil {
 		return nil, err
 	}
-	producer.SetLogger(log.New(os.Stderr, "", log.Flags()), gonsq.LogLevelError)
+	producer.SetLogger(log.New(os.Stderr, "", log.Flags()), nsq.LogLevelError)
 	return producer, nil
+}
+
+func Publish(topic string, body []byte, nsqName ...string) error {
+	nsqlist, ok := Client(nsqName...)
+
+	if !ok {
+		return errors.New("nsq producer config not found")
+	}
+
+	nsc, err := nsqlist.Get()
+	defer nsc.Close()
+	if err != nil {
+		return err
+	}
+
+	err = retry(2, func() error {
+		return nsc.Publish(topic, body)
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
