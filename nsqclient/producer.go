@@ -8,7 +8,7 @@ import (
 
 	"github.com/nsqio/go-nsq"
 	"github.com/verystar/golib/logger"
-	"github.com/verystar/nsqpool"
+	"github.com/verystar/golib/nsqclient/pool"
 )
 
 var (
