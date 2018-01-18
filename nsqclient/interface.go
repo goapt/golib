@@ -1,4 +1,4 @@
-package handler
+package nsqclient
 
 import (
 	"github.com/nsqio/go-nsq"

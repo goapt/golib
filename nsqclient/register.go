@@ -9,7 +9,6 @@ import (
 	"github.com/verystar/golib/color"
 	"github.com/verystar/golib/debug"
 	"github.com/verystar/golib/logger"
-	"github.com/verystar/golib/nsqclient/handler"
 )
 
 func Run(group string, ctx context.Context, conf Config) {
@@ -37,17 +36,17 @@ END:
 	<-stop
 }
 
-func Register(h handler.INsqHandler, group string) {
+func Register(h INsqHandler, group string) {
 	h.Group(group)
 }
 
 func runMulti(ctx context.Context, group string, conf Config) bool {
 
-	if _, check := handler.NsqGroups[group]; !check {
+	if _, check := NsqGroups[group]; !check {
 		return false
 	}
 
-	for _, h := range handler.NsqGroups[group] {
+	for _, h := range NsqGroups[group] {
 		for i := 0; i < h.GetSize(); i++ {
 			go runNsqConsumer(ctx, h, conf, false)
 
@@ -59,7 +58,7 @@ func runMulti(ctx context.Context, group string, conf Config) bool {
 	return true
 }
 
-func runNsqConsumer(ctx context.Context, h handler.INsqHandler, conf Config, isChannelTopic bool) {
+func runNsqConsumer(ctx context.Context, h INsqHandler, conf Config, isChannelTopic bool) {
 	var topic string
 	if isChannelTopic {
 		topic = h.GetChannelTopic()
