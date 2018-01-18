@@ -22,7 +22,7 @@ var Deferred = map[int]int{
 	9: 3600,
 }
 
-func DeferredDelay(m *nsq.Message, ) (bool, time.Duration) {
+func DeferredDelay(m *nsq.Message) (bool, time.Duration) {
 	a := int(m.Attempts)
 	l := len(Deferred)
 	delay, ok := Deferred[a]
