@@ -24,14 +24,9 @@ var Deferred = map[int]int{
 
 func DeferredDelay(m *nsq.Message) (bool, time.Duration) {
 	a := int(m.Attempts)
-	l := len(Deferred)
 	delay, ok := Deferred[a]
 	if !ok {
-		if a < len(Deferred) {
-			return false, -1
-		} else {
-			return true, time.Duration(Deferred[l-1]) * time.Second
-		}
+		return false, -1
 	}
 
 	return true, time.Duration(delay) * time.Second
