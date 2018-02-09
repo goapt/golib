@@ -160,6 +160,6 @@ func Compile(format string) string {
 	if len(match) > 2 {
 		return match[1]
 	} else {
-		return "error"
+		return "info"
 	}
 }
