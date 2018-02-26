@@ -101,7 +101,7 @@ func monitorPush(start time.Time, urlStr string, req *http.Response, err error) 
 	} else {
 		monitor.Stat(1, "CURL请求", parseErr(err.Error()), urls.Host)
 
-		logger.Error("[CURL ERROR]%s%+v", err.Error(), map[string]string{
+		logger.Info("[CURL ERROR]%s%+v", err.Error(), map[string]string{
 			"Url":         urlStr,
 			"RequestTime": diff_time_str,
 			"ErrorInfo":   err.Error(),
