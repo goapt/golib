@@ -1,19 +1,20 @@
 package model
 
 import (
+	"database/sql"
+	"fmt"
+	"reflect"
+	"strings"
+
 	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/db/upper"
-	"fmt"
-	"database/sql"
-	"strings"
-	"reflect"
 )
 
 type ModelRefect struct {
 	Fields []string
 }
 
-var modelRefectCache  = make(map[string] *ModelRefect, 0)
+var modelRefectCache = make(map[string]*ModelRefect, 0)
 
 type Query struct {
 	db.IBuilder
@@ -22,11 +23,11 @@ type Query struct {
 
 type IQuery interface {
 	db.IBuilder
-	GetByWhere(i interface{}, query string, arg interface{}, args ...interface{}) (bool, error)
-	GetById(i interface{}, id interface{}) (bool, error)
-	Replace(data map[string]interface{}) (sql.Result , error)
-	BatchReplace(keys []string , data [][]interface{}) (sql.Result , error)
-	BatchInsert(keys []string , data [][]interface{}) (sql.Result , error)
+	GetByWhere(i interface{}, query string, arg interface{}, args ...interface{}) error
+	GetById(i interface{}, id interface{}) error
+	Replace(data map[string]interface{}) (sql.Result, error)
+	BatchReplace(keys []string, data [][]interface{}) (sql.Result, error)
+	BatchInsert(keys []string, data [][]interface{}) (sql.Result, error)
 	GetModelRefect() *ModelRefect
 	GetModel() db.IModel
 }
@@ -38,65 +39,65 @@ func Builder(m db.IModel) db.IBuilder {
 func NewQuery(m db.IModel) IQuery {
 	return &Query{
 		IBuilder: Builder(m),
-		IModel:m,
+		IModel:   m,
 	}
 }
 
-func (q *Query ) GetModel() db.IModel {
+func (q *Query) GetModel() db.IModel {
 	return q.IModel
 }
-func (q *Query)GetModelRefect() *ModelRefect {
+func (q *Query) GetModelRefect() *ModelRefect {
 	t := reflect.TypeOf(q.IModel).Elem()
 	key := q.DbName() + ":" + q.TableName()
-	ref , ok := modelRefectCache[key]
+	ref, ok := modelRefectCache[key]
 	if ok {
-		return  ref
+		return ref
 	}
 
 	ref = &ModelRefect{}
-	for i := 0 ; i < t.NumField() ; i++ {
+	for i := 0; i < t.NumField(); i++ {
 		f := t.Field(i).Tag.Get("db")
 		if f == "-" {
 			continue
 		}
-		ref.Fields = append(ref.Fields , f)
+		ref.Fields = append(ref.Fields, f)
 	}
 	modelRefectCache[key] = ref
 	return ref
 }
 
-func (q *Query) GetByWhere(i interface{}, query string, arg interface{}, args ...interface{}) (bool, error) {
+func (q *Query) GetByWhere(i interface{}, query string, arg interface{}, args ...interface{}) error {
 	w := []interface{}{query, arg}
 	w = append(w, args...)
 	return q.Where(w...).Get(i)
 }
 
-func (q *Query) GetById(bean interface{}, id interface{}) (bool, error) {
+func (q *Query) GetById(bean interface{}, id interface{}) error {
 	return q.Where(id).Get(bean)
 }
 
-func (q *Query)Replace(data map[string]interface{}) (sql.Result , error) {
+func (q *Query) Replace(data map[string]interface{}) (sql.Result, error) {
 	keys := ""
 	binds := ""
-	vals := make([]interface{} , 0)
+	vals := make([]interface{}, 0)
 	if len(data) == 0 {
 		panic("IQuery::Replace data can not empty")
 	}
 	for key, value := range data {
 		keys += key + ","
 		binds += "?" + ","
-		vals = append(vals , value)
+		vals = append(vals, value)
 	}
-	keys = keys[:len(keys) - 1]
-	binds = binds[:len(binds) -1]
+	keys = keys[:len(keys)-1]
+	binds = binds[:len(binds)-1]
 
-	msql := fmt.Sprintf("REPLACE INTO %s (%s) values (%s)", q.TableName(), keys , binds)
-	return q.Exec(msql,vals...)
+	msql := fmt.Sprintf("REPLACE INTO %s (%s) values (%s)", q.TableName(), keys, binds)
+	return q.Exec(msql, vals...)
 }
 
-func (q *Query)BatchReplace(keys []string , data [][]interface{}) (sql.Result , error) {
+func (q *Query) BatchReplace(keys []string, data [][]interface{}) (sql.Result, error) {
 	all_binds := ""
-	vals := make([]interface{} , 0)
+	vals := make([]interface{}, 0)
 	if len(keys) == 0 {
 		panic("IQuery::BatchReplace keys can not empty")
 	}
@@ -107,19 +108,19 @@ func (q *Query)BatchReplace(keys []string , data [][]interface{}) (sql.Result , 
 		binds := ""
 		for _, value := range item {
 			binds += "?" + ","
-			vals = append(vals , value)
+			vals = append(vals, value)
 		}
-		binds = binds[:len(binds) -1]
-		all_binds += "("+binds+"),"
+		binds = binds[:len(binds)-1]
+		all_binds += "(" + binds + "),"
 	}
-	all_binds = all_binds[:len(all_binds) -1]
-	msql := fmt.Sprintf("REPLACE INTO %s (%s) values %s", q.TableName(), strings.Join(keys,",") , all_binds)
-	return q.Exec(msql,vals...)
+	all_binds = all_binds[:len(all_binds)-1]
+	msql := fmt.Sprintf("REPLACE INTO %s (%s) values %s", q.TableName(), strings.Join(keys, ","), all_binds)
+	return q.Exec(msql, vals...)
 }
 
-func (q *Query)BatchInsert(keys []string , data [][]interface{}) (sql.Result , error) {
+func (q *Query) BatchInsert(keys []string, data [][]interface{}) (sql.Result, error) {
 	all_binds := ""
-	vals := make([]interface{} , 0)
+	vals := make([]interface{}, 0)
 	if len(keys) == 0 {
 		panic("IQuery::BatchInsert keys can not empty")
 	}
@@ -130,12 +131,12 @@ func (q *Query)BatchInsert(keys []string , data [][]interface{}) (sql.Result , e
 		binds := ""
 		for _, value := range item {
 			binds += "?" + ","
-			vals = append(vals , value)
+			vals = append(vals, value)
 		}
-		binds = binds[:len(binds) -1]
-		all_binds += "("+binds+"),"
+		binds = binds[:len(binds)-1]
+		all_binds += "(" + binds + "),"
 	}
-	all_binds = all_binds[:len(all_binds) -1]
-	msql := fmt.Sprintf("INSERT INTO %s (%s) values %s", q.TableName(), strings.Join(keys,",") , all_binds)
-	return q.Exec(msql,vals...)
+	all_binds = all_binds[:len(all_binds)-1]
+	msql := fmt.Sprintf("INSERT INTO %s (%s) values %s", q.TableName(), strings.Join(keys, ","), all_binds)
+	return q.Exec(msql, vals...)
 }
