@@ -79,16 +79,8 @@ func (b *Builder) OrderBy(s string) db.IBuilder {
 	return b
 }
 
-func (b *Builder) Get(i interface{}) (bool, error) {
-	err := b.where.Limit(1).One(i)
-	if err != nil {
-		if err == upperdb.ErrNoMoreRows {
-			return false, nil
-		}
-		return false, err
-	}
-
-	return true, nil
+func (b *Builder) Get(i interface{}) error {
+	return b.where.Limit(1).One(i)
 }
 
 func (b *Builder) Exec(sql string, args ...interface{}) (sql.Result, error) {

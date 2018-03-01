@@ -22,13 +22,13 @@ type IBuilder interface {
 	//排序
 	OrderBy(s string) IBuilder
 	//查询一条
-	Get(i interface{}) (bool, error)
+	Get(i interface{}) error
 	//原生执行
-	Exec(sql string,args ...interface{}) (sql.Result, error)
+	Exec(sql string, args ...interface{}) (sql.Result, error)
 	//原生查询
-	Query(i interface{}, sql string,args... interface{}) error
+	Query(i interface{}, sql string, args ... interface{}) error
 	//原生查询一条
-	QueryRow(i interface{}, sql string,args... interface{}) error
+	QueryRow(i interface{}, sql string, args ... interface{}) error
 	//查询多条
 	All(i interface{}) error
 	//统计
@@ -36,7 +36,7 @@ type IBuilder interface {
 	//创建
 	Create(i interface{}) (int64, error)
 	//更新
-	Update(i interface{},s ...[]string) (int64, error)
+	Update(i interface{}, s ...[]string) (int64, error)
 	//删除
 	Delete() (int64, error)
 	//设置事务上下文
