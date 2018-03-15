@@ -2,6 +2,7 @@ package logger
 
 import (
 	"log"
+	"os"
 
 	"github.com/sirupsen/logrus"
 )
@@ -17,6 +18,7 @@ func NewStdLogger() ILogger {
 
 func (l *StdLogger) Fatal(format string, args ...interface{}) {
 	log.Printf(format, args...)
+	os.Exit(1)
 }
 
 func (l *StdLogger) Debug(format string, args ...interface{}) {

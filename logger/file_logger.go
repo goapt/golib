@@ -71,6 +71,7 @@ func (l *FileLogger) Fatal(format string, args ...interface{}) {
 	l.WithFields(logrus.Fields{
 		"fingerprint": []string{format},
 	}).Fatalf(format, args...)
+	os.Exit(1)
 }
 
 func (l *FileLogger) Log(level string, format string, args ...interface{}) {
