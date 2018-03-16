@@ -17,10 +17,10 @@ var (
 )
 
 type Config struct {
-	Host     string
-	Port     string
-	InitSize int `toml:"init_size"`
-	MaxSize  int `toml:"max_size"`
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	InitSize int    `toml:"init_size" json:"init_size"`
+	MaxSize  int    `toml:"max_size" json:"max_size"`
 }
 
 func Connect(configs map[string]Config) {
