@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"github.com/verystar/db/lib/sqlbuilder"
 )
 
 type IModel interface {
@@ -47,4 +48,5 @@ type IBuilder interface {
 	//Commit() IBuilder
 	////事务回滚
 	//Rollback() IBuilder
+	Iterator(sql string , args ...interface{}) sqlbuilder.Iterator
 }

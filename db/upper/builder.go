@@ -64,6 +64,10 @@ func (b *Builder) Where(w ...interface{}) db.IBuilder {
 	return b
 }
 
+func (b *Builder) Iterator(sql string , args ...interface{}) sqlbuilder.Iterator {
+	return b.db.Iterator(sql , args...)
+}
+
 func (b *Builder) Limit(i int) db.IBuilder {
 	b.where = b.where.Limit(i)
 	return b
