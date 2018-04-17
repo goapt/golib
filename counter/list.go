@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 	"sync/atomic"
+	"context"
 )
 
 type Ceil struct {
@@ -19,13 +20,15 @@ type Timeline struct {
 	Container  [] *CeilList `json:"container"`    // 数据容器
 	MaxMemTime int64        `json:"max_mem_time"` // 最大记忆秒数
 	Counters   []*Counter   `json:"counters"`
+	Context    context.Context
 }
 
-func NewTimeline(max_mem_time int64) *Timeline {
+func NewTimeline(max_mem_time int64, ctx context.Context) *Timeline {
 	l := &Timeline{
 		Container:  make([] *CeilList, 0),
 		MaxMemTime: max_mem_time,
 		Counters:   make([]*Counter, 0),
+		Context:    ctx,
 	}
 	return l
 }
@@ -71,6 +74,8 @@ func (l *Timeline) Loop() {
 			l.Pop(unix)
 			// 通知所有的 符合条件的counter
 			go l.Notify(t)
+		case <-l.Context.Done():
+			return
 		}
 	}
 }
