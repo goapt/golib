@@ -49,6 +49,11 @@ func (l *Timeline) Start() {
 	go l.Loop()
 }
 
+func (l *Timeline) StartWithContext(ctx context.Context) {
+	l.Context = ctx
+	go l.Loop()
+}
+
 func (l *Timeline) Loop() {
 	timer := time.NewTicker(time.Second)
 	defer timer.Stop()

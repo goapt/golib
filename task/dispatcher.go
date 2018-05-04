@@ -3,7 +3,6 @@ package task
 import (
 	"context"
 	"sync/atomic"
-	"fmt"
 	"time"
 )
 
@@ -58,7 +57,7 @@ func (d *Dispatcher) run() {
 			}()
 		default:
 
-			fmt.Println("IsStopAddTask", d.IsStopAddTask, "counter", d.counter)
+			//fmt.Println("IsStopAddTask", d.IsStopAddTask, "counter", d.counter)
 			if d.IsStopAddTask && atomic.LoadInt32(&d.counter) < 1 {
 				d.StopChan <- struct{}{} // 结束
 				return

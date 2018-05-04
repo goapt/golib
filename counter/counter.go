@@ -14,6 +14,7 @@ type Counter struct {
 	CurrentNum     int32 // 秒级别的统计数据量
 	LastNotifyUnix int64 // 最后的notify时间
 	Handler        Handler
+	Mata           map[string]interface{}
 }
 
 func NewCounter(duration int64, quite int64, max int32) *Counter {
@@ -21,6 +22,7 @@ func NewCounter(duration int64, quite int64, max int32) *Counter {
 		Duration: duration,
 		Quite:    quite,
 		Max:      max,
+		Mata: make(map[string]interface{}),
 	}
 	return c
 }
