@@ -60,7 +60,3 @@
 [[constraint]]
   name = "golang.org/x/text"
   version = "0.3.0"
-
-[prune]
-  go-tests = false
-  unused-packages = false
