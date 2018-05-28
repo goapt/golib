@@ -1,9 +1,9 @@
 package zip
 
 import (
-	"os"
 	"archive/zip"
 	"io"
+	"os"
 )
 
 func Compress(file *os.File, prefix string, zw *zip.Writer) error {
