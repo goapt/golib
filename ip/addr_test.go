@@ -1,15 +1,18 @@
 package ip
 
 import (
-	"github.com/funkygao/assert"
 	"testing"
 )
 
 func TestLocalIpv4Addrs(t *testing.T) {
 	ips, err := LocalIpv4Addrs()
-	assert.Equal(t, nil, err)
+	if err != nil {
+		t.Error(err)
+	}
 	t.Logf("%+v", ips)
-	assert.Equal(t, true, len(ips) > 0) // assume all hosts has NIC
+	if len(ips) == 0 {
+		t.Error("not found")
+	}
 
 	// loopback is excluded
 	for _, ip := range ips {

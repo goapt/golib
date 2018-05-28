@@ -1,3 +1,4 @@
 examples/
 /vendor
 .idea/
+Gopkg.lock
