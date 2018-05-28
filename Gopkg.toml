@@ -60,3 +60,13 @@
 [[constraint]]
   name = "golang.org/x/text"
   version = "0.3.0"
+
+[prune]
+  go-tests = true
+  unused-packages = true
+
+  [[prune.db]]
+    name = "github.com/verystar/db"
+    unused-packages = false
+    non-go = false
+    go-tests = false
