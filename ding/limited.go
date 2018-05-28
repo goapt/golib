@@ -1,8 +1,8 @@
 package ding
 
 import (
-	"time"
 	"sync"
+	"time"
 )
 
 // 有限的发送

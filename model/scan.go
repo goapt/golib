@@ -1,12 +1,12 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
-	"errors"
 )
 
 var (
@@ -132,36 +132,6 @@ func convertAssignValue(d reflect.Value, s interface{}) (err error) {
 	}
 	return err
 }
-
-// map to struct
-//func ScanStruct(src map[string]string, dest interface{}) error {
-//	d := reflect.ValueOf(dest)
-//	if d.Kind() != reflect.Ptr || d.IsNil() {
-//		return errScanStructValue
-//	}
-//	d = d.Elem()
-//	if d.Kind() != reflect.Struct {
-//		return errScanStructValue
-//	}
-//	dd := reflect.TypeOf(dest).Elem() //通过反射获取type定义
-//	col := make(map[string]string)
-//
-//	for i := 0; i < dd.NumField(); i++ {
-//		val := dd.Field(i).Tag.Get(ScanTagName)
-//		name := dd.Field(i).Name
-//		if val != "-" {
-//			col[val] = name
-//		}
-//	}
-//
-//	for k, c := range col {
-//		if err := convertAssignValue(d.FieldByName(c), src[k]); err != nil {
-//			return fmt.Errorf("ScanStruct: cannot assign field %s: %v", c, err)
-//		}
-//	}
-//
-//	return nil
-//}
 
 var (
 	structSpecMutex sync.RWMutex
