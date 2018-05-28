@@ -1,12 +1,12 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
+	"errors"
 )
 
 var (
@@ -15,6 +15,11 @@ var (
 
 var _ctime time.Time
 var _ctime_type = reflect.TypeOf(_ctime)
+
+var (
+	errScanStructValue    = errors.New("ScanStruct: value must be non-nil pointer to a struct")
+	ErrScanStructEmptySrc = errors.New("ScanStruct:src must not be empty")
+)
 
 func cannotConvert(d reflect.Value, s interface{}) error {
 	var sname string
@@ -128,8 +133,6 @@ func convertAssignValue(d reflect.Value, s interface{}) (err error) {
 	return err
 }
 
-var errScanStructValue = errors.New("ScanStruct: value must be non-nil pointer to a struct")
-
 // map to struct
 //func ScanStruct(src map[string]string, dest interface{}) error {
 //	d := reflect.ValueOf(dest)
@@ -195,10 +198,16 @@ func structSpecForType(t reflect.Type) map[string]string {
 }
 
 func ScanStruct(src map[string]string, dest interface{}) error {
+
+	if src == nil || len(src) == 0 {
+		return ErrScanStructEmptySrc
+	}
+
 	d := reflect.ValueOf(dest)
 	if d.Kind() != reflect.Ptr || d.IsNil() {
 		return errScanStructValue
 	}
+
 	d = d.Elem()
 	if d.Kind() != reflect.Struct {
 		return errScanStructValue
