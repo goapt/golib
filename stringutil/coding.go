@@ -1,4 +1,4 @@
-package iconv
+package stringutil
 
 import (
 	"bytes"
