@@ -216,6 +216,10 @@ func (b *Builder) Columns() (clms []string, err error) {
 	return clms, nil
 }
 
+func (b *Builder) Db() UpperDatabase {
+	return b.db
+}
+
 func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]interface{} {
 	m := make(map[string]interface{})
 
