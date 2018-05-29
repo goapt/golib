@@ -1,7 +1,7 @@
 package ip
 
 import (
-	"github.com/funkygao/assert"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
