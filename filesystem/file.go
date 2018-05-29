@@ -10,13 +10,7 @@ import (
 
 func FileExists(path string) (bool) {
 	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	}
-	if os.IsNotExist(err) {
-		return false
-	}
-	return false
+	return !os.IsNotExist(err)
 }
 
 func WriteToFile(filename string, text []byte) error {

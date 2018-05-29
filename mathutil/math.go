@@ -5,20 +5,6 @@ import (
 	"strconv"
 )
 
-// Copyright 2014 com authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License"): you may
-// not use this file except in compliance with the License. You may obtain
-// a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
-
 // PowInt is int type of math.Pow function.
 func PowInt(x int, y int) int {
 	if y <= 0 {
@@ -47,4 +33,36 @@ func AbsInt(x int) int {
 		return x
 	}
 	return -1 * x
+}
+
+func MinInt(a int, b int) int {
+	if a > b {
+		return b
+	} else {
+		return a
+	}
+}
+
+func MaxInt(a int, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
+func MinInt64(a int64, b int64) int64 {
+	if a > b {
+		return b
+	} else {
+		return a
+	}
+}
+
+func MaxInt64(a int64, b int64) int64 {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
 }
