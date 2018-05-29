@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var s string = "GBK与UTF-8 编码转换测试"
+var s = "GBK与UTF-8 编码转换测试"
 
 func TestGbkToUtf8(t *testing.T) {
 	gbk, err := Utf8ToGbk([]byte(s))
@@ -15,7 +15,7 @@ func TestGbkToUtf8(t *testing.T) {
 
 	utf8, err := GbkToUtf8([]byte(gbk))
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 	}
 
 	if string(utf8) != s {
