@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	nsq "github.com/nsqio/go-nsq"
+	"github.com/nsqio/go-nsq"
 )
 
 var (
@@ -122,7 +122,7 @@ func TestPool_PutUnusableConn(t *testing.T) {
 
 	conn.Close()
 	if p.Len() != poolSize-1 {
-		t.Errorf("Pool size is expected to be initial_size - 1", p.Len(), poolSize-1)
+		t.Errorf("Pool size is expected to be initial_size - 1 [%d:%d]", p.Len(), poolSize-1)
 	}
 }
 
