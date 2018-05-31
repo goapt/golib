@@ -8,9 +8,19 @@ import (
 	"path/filepath"
 )
 
-func FileExists(path string) (bool) {
+func IsExists(path string) (bool) {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+// IsDir determines whether the specified path is a directory.
+func IsDir(path string) bool {
+	fio, err := os.Lstat(path)
+	if nil != err {
+		return false
+	}
+
+	return fio.IsDir()
 }
 
 func WriteToFile(filename string, text []byte) error {
@@ -30,13 +40,11 @@ func WriteToFile(filename string, text []byte) error {
 	return nil
 }
 
-
 // CopyFile copies the contents of the file named src to the file named
 // by dst. The file will be created if it does not already exist. If the
 // destination file exists, all it's contents will be replaced by the contents
 // of the source file. The file mode will be copied from the source and
 // the copied data is synced/flushed to stable storage.
-
 func CopyFile(src, dst string) (err error) {
 	in, err := os.Open(src)
 	if err != nil {
