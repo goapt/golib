@@ -72,7 +72,7 @@ func convertAssignBulkString(d reflect.Value, s []byte) (err error) {
 		}
 	case reflect.Struct:
 		if fieldType.ConvertibleTo(_ctime_type) {
-			t, err := time.Parse("2006-01-02 15:04:05", ss)
+			t, err := time.ParseInLocation("2006-01-02 15:04:05", ss, time.Local)
 			if err != nil {
 				return err
 			}
