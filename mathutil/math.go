@@ -19,6 +19,8 @@ func PowInt(x int, y int) int {
 	}
 }
 
+//deprecated
+//golang 1.10 or above please use math.Round
 func Round(f float64) (int, error) {
 	return strconv.Atoi(fmt.Sprintf("%.f", f))
 }
