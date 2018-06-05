@@ -6,7 +6,7 @@ import (
 	"github.com/verystar/db/lib/sqlbuilder"
 	"github.com/verystar/db/mysql"
 	"github.com/verystar/golib/cache"
-	"github.com/verystar/golib/db"
+	"github.com/verystar/golib/config"
 	"github.com/verystar/golib/logger"
 )
 
@@ -36,7 +36,7 @@ func List() map[string]*Database {
 	return dbService
 }
 
-func Connect(configs map[string]*db.Config) {
+func Connect(configs map[string]*config.Database) {
 
 	var errs []string
 	defer func() {
@@ -62,7 +62,6 @@ func Connect(configs map[string]*db.Config) {
 		sess, err := mysql.Open(setting)
 
 		if err != nil {
-			logger.Error("[db] open error", err.Error())
 			errs = append(errs, err.Error())
 			continue
 		}

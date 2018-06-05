@@ -2,6 +2,7 @@ package redis
 
 import (
 	"github.com/go-redis/redis"
+	"github.com/verystar/golib/config"
 	"github.com/verystar/golib/logger"
 	"strings"
 )
@@ -10,12 +11,6 @@ var (
 	redisList map[string]*redis.Client
 	errs      []string
 )
-
-type Config struct {
-	Server   string
-	Password string
-	DB       int
-}
 
 func Client(name ... string) (*redis.Client, bool) {
 	key := "default"
@@ -26,7 +21,7 @@ func Client(name ... string) (*redis.Client, bool) {
 	return pool, ok
 }
 
-func Connect(configs map[string]Config) {
+func Connect(configs map[string]config.Redis) {
 	defer func() {
 		if len(errs) > 0 {
 			panic("[redis] " + strings.Join(errs, "\n"))
@@ -49,7 +44,7 @@ func Connect(configs map[string]Config) {
 }
 
 // 创建 redis pool
-func newRedis(conf *Config) *redis.Client {
+func newRedis(conf *config.Redis) *redis.Client {
 
 	client := redis.NewClient(&redis.Options{
 		Addr:     conf.Server,

@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/verystar/golib/db"
+	"github.com/verystar/golib/config"
 	"github.com/verystar/golib/logger"
 )
 
@@ -30,7 +30,7 @@ func List() map[string]*sqlx.DB {
 	return dbService
 }
 
-func Connect(configs map[string]*db.Config) {
+func Connect(configs map[string]*config.Database) {
 
 	var errs []string
 	defer func() {
@@ -51,7 +51,6 @@ func Connect(configs map[string]*db.Config) {
 		sess, err := sqlx.Connect(conf.Driver, conf.Dsn)
 
 		if err != nil {
-			logger.Error("[db] open error %s", err.Error())
 			errs = append(errs, err.Error())
 			continue
 		}

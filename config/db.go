@@ -1,6 +1,6 @@
-package db
+package config
 
-type Config struct {
+type Database struct {
 	Enable       bool   `json:"enable"`
 	Driver       string `json:"driver"`
 	Dsn          string `json:"dsn"`
