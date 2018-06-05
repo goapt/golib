@@ -3,3 +3,11 @@ sudo: false
 go:
   - 1.9.x
   - 1.10.x
+
+services:
+  - mysql
+
+# create test database
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS users;'
+  - export MYSQL_TEST_DSN="travis:@/users?parseTime=true"
