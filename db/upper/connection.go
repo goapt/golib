@@ -1,13 +1,13 @@
 package upper
 
 import (
+	"log"
 	"strings"
 
 	"github.com/verystar/db/lib/sqlbuilder"
 	"github.com/verystar/db/mysql"
 	"github.com/verystar/golib/cache"
-	"github.com/verystar/golib/config"
-	"github.com/verystar/golib/logger"
+	"github.com/verystar/golib/db"
 )
 
 type Database struct {
@@ -26,7 +26,7 @@ func MustDB(name ...string) *Database {
 
 	engine, ok := dbService[name[0]]
 	if !ok {
-		logger.Fatal("[db] the database link `%s` is not configured", name[0])
+		log.Fatalf("[db] the database link `%s` is not configured", name[0])
 	}
 	return engine
 }
@@ -36,7 +36,7 @@ func List() map[string]*Database {
 	return dbService
 }
 
-func Connect(configs map[string]*config.Database) {
+func Connect(configs map[string]*db.Config) {
 
 	var errs []string
 	defer func() {
@@ -45,7 +45,7 @@ func Connect(configs map[string]*config.Database) {
 		}
 
 		if _, ok := dbService["default"]; !ok {
-			logger.Fatal("[db] the `default` database engine must be configured and enabled")
+			log.Fatal("[db] the `default` database engine must be configured and enabled")
 		}
 	}()
 
@@ -65,7 +65,7 @@ func Connect(configs map[string]*config.Database) {
 			errs = append(errs, err.Error())
 			continue
 		}
-		logger.Debug("[db] connect:" + key)
+		log.Println("[db] connect:" + key)
 
 		if conf.ShowSql {
 			sess.SetLogging(true)

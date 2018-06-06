@@ -1,12 +1,12 @@
 package sqlx
 
 import (
+	"log"
 	"strings"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"github.com/verystar/golib/config"
-	"github.com/verystar/golib/logger"
 )
 
 var dbService = make(map[string]*sqlx.DB, 0)
@@ -17,10 +17,9 @@ func DB(name ...string) *sqlx.DB {
 	if len(name) == 0 {
 		return dbService["default"]
 	}
-
 	engine, ok := dbService[name[0]]
 	if !ok {
-		logger.Fatal("[db] the database link `%s` is not configured", name[0])
+		log.Fatalf("[db] the database link `%s` is not configured", name[0])
 	}
 	return engine
 }
@@ -39,7 +38,7 @@ func Connect(configs map[string]*config.Database) {
 		}
 
 		if _, ok := dbService["default"]; !ok {
-			logger.Fatal("[db] the `default` database engine must be configured and enabled")
+			log.Fatal("[db] the `default` database engine must be configured and enabled")
 		}
 	}()
 
@@ -54,7 +53,7 @@ func Connect(configs map[string]*config.Database) {
 			errs = append(errs, err.Error())
 			continue
 		}
-		logger.Debug("[db] connect:" + key)
+		log.Println("[db] connect:" + key)
 
 		if conf.ShowSql {
 			//sess.SetLogging(true)
