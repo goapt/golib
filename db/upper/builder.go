@@ -13,7 +13,7 @@ import (
 )
 
 var _ db.IBuilder = (*Builder)(nil)
-var mapper = reflectx.NewMapper("db")
+var mapper = reflectx.NewMapper("Session")
 
 var AUTO_CREATE_TIME_FIELDS = []string{
 	"create_time",
@@ -36,7 +36,7 @@ type UpperDatabase interface {
 }
 
 type Builder struct {
-	db           UpperDatabase
+	Session      UpperDatabase
 	collection   upperdb.Collection
 	where        upperdb.Result
 	cacheColumns *cache.Cache
@@ -49,13 +49,13 @@ func NewBuilder(db ... string) *Builder {
 	}
 	client := MustDB(link_db)
 	return &Builder{
-		db:           client.Link,
+		Session:      client.Link,
 		cacheColumns: client.CachedColumns,
 	}
 }
 
 func (b *Builder) Table(t string) db.IBuilder {
-	b.collection = b.db.Collection(t)
+	b.collection = b.Session.Collection(t)
 	return b
 }
 
@@ -65,7 +65,7 @@ func (b *Builder) Where(w ...interface{}) db.IBuilder {
 }
 
 func (b *Builder) Iterator(sql string , args ...interface{}) sqlbuilder.Iterator {
-	return b.db.Iterator(sql , args...)
+	return b.Session.Iterator(sql , args...)
 }
 
 func (b *Builder) Limit(i int) db.IBuilder {
@@ -88,11 +88,11 @@ func (b *Builder) Get(i interface{}) error {
 }
 
 func (b *Builder) Exec(sql string, args ...interface{}) (sql.Result, error) {
-	return b.db.Exec(sql, args...)
+	return b.Session.Exec(sql, args...)
 }
 
 func (b *Builder) Query(i interface{}, sql string, param ... interface{}) error {
-	iter := b.db.Iterator(sql, param...)
+	iter := b.Session.Iterator(sql, param...)
 	if err := iter.Err(); err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (b *Builder) Query(i interface{}, sql string, param ... interface{}) error 
 }
 
 func (b *Builder) QueryRow(i interface{}, sql string, param ... interface{}) error {
-	iter := b.db.Iterator(sql, param...)
+	iter := b.Session.Iterator(sql, param...)
 	if err := iter.Err(); err != nil {
 		return err
 	}
@@ -184,22 +184,22 @@ func (b *Builder) Delete() (int64, error) {
 
 func (b *Builder) WithContext(i interface{}) db.IBuilder {
 	tx, _ := i.(sqlbuilder.Tx)
-	b.db = tx
+	b.Session = tx
 	return b
 }
 
 func (b *Builder) Columns() (clms []string, err error) {
 
-	h := cache.String("columns_" + b.db.Name() + "_" + b.collection.Name())
+	h := cache.String("columns_" + b.Session.Name() + "_" + b.collection.Name())
 
 	ccol, ok := b.cacheColumns.ReadRaw(h)
 	if ok {
 		return ccol.([]string), nil
 	}
 
-	q := b.db.Select("column_name").
+	q := b.Session.Select("column_name").
 		From("information_schema.columns").
-		Where("table_schema = '" + b.db.Name() + "' AND table_name = '" + b.collection.Name() + "'")
+		Where("table_schema = '" + b.Session.Name() + "' AND table_name = '" + b.collection.Name() + "'")
 
 	iter := q.Iterator()
 	defer iter.Close()
@@ -217,7 +217,7 @@ func (b *Builder) Columns() (clms []string, err error) {
 }
 
 func (b *Builder) Db() UpperDatabase {
-	return b.db
+	return b.Session
 }
 
 func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]interface{} {

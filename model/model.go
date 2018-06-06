@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/verystar/db/lib/sqlbuilder"
 	"github.com/verystar/golib/db"
 	"github.com/verystar/golib/db/upper"
 )
@@ -30,6 +31,7 @@ type IQuery interface {
 	BatchInsert(keys []string, data [][]interface{}) (sql.Result, error)
 	GetModelRefect() *ModelRefect
 	GetModel() db.IModel
+	Iterator(sql string, args ...interface{}) sqlbuilder.Iterator
 }
 
 func Builder(m db.IModel) db.IBuilder {
@@ -46,6 +48,15 @@ func NewQuery(m db.IModel) IQuery {
 func (q *Query) GetModel() db.IModel {
 	return q.IModel
 }
+
+func (q *Query) Iterator(sql string, args ...interface{}) sqlbuilder.Iterator {
+	if builder, ok := q.IBuilder.(*upper.Builder); ok {
+		return builder.Session.Iterator(sql, args...)
+	}
+
+	return nil
+}
+
 func (q *Query) GetModelRefect() *ModelRefect {
 	t := reflect.TypeOf(q.IModel).Elem()
 	key := q.DbName() + ":" + q.TableName()
