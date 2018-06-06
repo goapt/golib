@@ -2,7 +2,7 @@ package redis
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/verystar/golib/logger"
+	"log"
 	"strings"
 )
 
@@ -29,18 +29,17 @@ func Client(name ... string) (*redis.Client, bool) {
 func Connect(configs map[string]Config) {
 	defer func() {
 		if len(errs) > 0 {
-			panic("[redis] " + strings.Join(errs, "\n"))
+			log.Fatal("[redis] " + strings.Join(errs, "\n"))
 		}
 	}()
 
 	redisList = make(map[string]*redis.Client)
 	for name, conf := range configs {
 		r := newRedis(&conf)
-		logger.Debug("[redis] connect:" + conf.Server)
+		log.Println("[redis] connect:" + conf.Server)
 
 		_, err := r.Ping().Result()
 		if err != nil {
-			logger.Error("[redis] ping", err.Error())
 			errs = append(errs, err.Error())
 		}
 
