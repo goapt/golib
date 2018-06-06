@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/verystar/golib/config"
+	"github.com/verystar/golib/db"
 )
 
 var dbService = make(map[string]*sqlx.DB, 0)
@@ -29,7 +29,7 @@ func List() map[string]*sqlx.DB {
 	return dbService
 }
 
-func Connect(configs map[string]*config.Database) {
+func Connect(configs map[string]*db.Config) {
 
 	var errs []string
 	defer func() {
