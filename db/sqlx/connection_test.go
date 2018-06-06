@@ -4,11 +4,11 @@ import (
 	"os"
 	"testing"
 
-	"github.com/verystar/golib/config"
+	"github.com/verystar/golib/db"
 )
 
 func TestConnect(t *testing.T) {
-	configs := make(map[string]*config.Database)
+	configs := make(map[string]*db.Config)
 
 	dsn := os.Getenv("MYSQL_TEST_DSN")
 
@@ -16,7 +16,7 @@ func TestConnect(t *testing.T) {
 		dsn = "root:123456@tcp(127.0.0.1:3306)/test?charset=utf8&parseTime=True&loc=Asia%2FShanghai"
 	}
 
-	configs["default"] = &config.Database{
+	configs["default"] = &db.Config{
 		Enable: true,
 		Driver: "mysql",
 		Dsn:    dsn,
