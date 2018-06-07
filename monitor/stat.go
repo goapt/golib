@@ -32,11 +32,8 @@ func (m *RedisMonitor) Run() {
 	var err error
 	var marshaledBytes []byte
 
-	client, ok := redis.Client("stat")
-	if !ok {
-		logger.Fatal("Redis not found")
-		return
-	}
+	client := redis.Client("stat")
+
 	var count uint32
 	pipe := client.Pipeline()
 	for data := range m.data {
