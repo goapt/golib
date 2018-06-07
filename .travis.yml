@@ -12,3 +12,6 @@ services:
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS users;'
   - export MYSQL_TEST_DSN="travis:@/users?parseTime=true"
+
+notifications:
+   webhooks: https://oapi.dingtalk.com/robot/send?access_token=585ec926ed59ac42f162c9b3efdac56509113616a4681f256d3313845bf9a11c
