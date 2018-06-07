@@ -17,13 +17,18 @@ type Config struct {
 	DB       int
 }
 
-func Client(name ... string) (*redis.Client, bool) {
+func Client(name ... string) *redis.Client {
 	key := "default"
 	if len(name) > 0 {
 		key = name[0]
 	}
-	pool, ok := redisList[key]
-	return pool, ok
+
+	client, ok := redisList[key]
+	if !ok {
+		log.Fatalf("[redis] the redis client `%s` is not configured", key)
+	}
+
+	return client
 }
 
 func Connect(configs map[string]Config) {
@@ -41,6 +46,7 @@ func Connect(configs map[string]Config) {
 		_, err := r.Ping().Result()
 		if err != nil {
 			errs = append(errs, err.Error())
+			continue
 		}
 
 		redisList[name] = newRedis(&conf)

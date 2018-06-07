@@ -6,6 +6,7 @@ go:
 
 services:
   - mysql
+  - redis-server
 
 # create test database
 before_install:
