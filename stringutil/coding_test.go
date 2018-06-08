@@ -1,7 +1,6 @@
 package stringutil
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -24,10 +23,10 @@ func TestGbkToUtf8(t *testing.T) {
 }
 
 func TestUtf8ToGbk(t *testing.T) {
-	gbk, err := Utf8ToGbk([]byte(s))
+	_, err := Utf8ToGbk([]byte(s))
 	if err != nil {
 		t.Error(err)
 	}
 
-	fmt.Printf("%s", string(gbk))
+	//fmt.Printf("%s", string(gbk))
 }

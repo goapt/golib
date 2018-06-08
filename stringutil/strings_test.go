@@ -11,7 +11,7 @@ func BenchmarkGetRandomString(b *testing.B) {
 }
 
 func TestGetRandomString(t *testing.T) {
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		s := RandomString(8)
 		if len(s) != 8 {
 			t.Error("string length error:" + s)
