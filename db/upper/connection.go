@@ -26,7 +26,7 @@ func MustDB(name ...string) *Database {
 
 	engine, ok := dbService[name[0]]
 	if !ok {
-		log.Fatalf("[Session] the database link `%s` is not configured", name[0])
+		log.Fatalf("[db] the database link `%s` is not configured", name[0])
 	}
 	return engine
 }
@@ -41,11 +41,11 @@ func Connect(configs map[string]*db.Config) {
 	var errs []string
 	defer func() {
 		if len(errs) > 0 {
-			panic("[Session] " + strings.Join(errs, "\n"))
+			panic("[db] " + strings.Join(errs, "\n"))
 		}
 
 		if _, ok := dbService["default"]; !ok {
-			log.Fatal("[Session] the `default` database engine must be configured and enabled")
+			log.Fatal("[db] the `default` database engine must be configured and enabled")
 		}
 	}()
 
