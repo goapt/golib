@@ -1,6 +1,9 @@
 package logger
 
 import (
+	"os"
+	"time"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,6 +35,8 @@ func (l *ChanLogger) Fatal(format string, args ...interface{}) {
 		format: format,
 		args:   args,
 	}
+	<-time.After(2 * time.Second)
+	os.Exit(1)
 }
 
 func (l *ChanLogger) Debug(format string, args ...interface{}) {
