@@ -13,7 +13,7 @@ import (
 )
 
 var _ db.IBuilder = (*Builder)(nil)
-var mapper = reflectx.NewMapper("Session")
+var mapper = reflectx.NewMapper("db")
 
 var AUTO_CREATE_TIME_FIELDS = []string{
 	"create_time",
@@ -64,8 +64,8 @@ func (b *Builder) Where(w ...interface{}) db.IBuilder {
 	return b
 }
 
-func (b *Builder) Iterator(sql string , args ...interface{}) sqlbuilder.Iterator {
-	return b.Session.Iterator(sql , args...)
+func (b *Builder) Iterator(sql string, args ...interface{}) sqlbuilder.Iterator {
+	return b.Session.Iterator(sql, args...)
 }
 
 func (b *Builder) Limit(i int) db.IBuilder {
