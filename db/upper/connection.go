@@ -65,7 +65,7 @@ func Connect(configs map[string]*db.Config) {
 			errs = append(errs, err.Error())
 			continue
 		}
-		log.Println("[Session] connect:" + key)
+		log.Println("[db] connect:" + key)
 
 		if conf.ShowSql {
 			sess.SetLogging(true)
