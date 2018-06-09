@@ -1,4 +1,4 @@
-package zip
+package compress
 
 import (
 	"archive/zip"
@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func Compress(file *os.File, prefix string, zw *zip.Writer) error {
+func ZipCompress(file *os.File, prefix string, zw *zip.Writer) error {
 	info, err := file.Stat()
 	if err != nil {
 		return err
@@ -22,7 +22,7 @@ func Compress(file *os.File, prefix string, zw *zip.Writer) error {
 			if err != nil {
 				return err
 			}
-			err = Compress(f, prefix, zw)
+			err = ZipCompress(f, prefix, zw)
 			if err != nil {
 				return err
 			}
