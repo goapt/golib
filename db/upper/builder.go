@@ -110,10 +110,18 @@ func (b *Builder) QueryRow(i interface{}, sql string, param ... interface{}) err
 }
 
 func (b *Builder) All(i interface{}) error {
+	if b.where == nil {
+		b.Where()
+	}
+
 	return b.where.All(i)
 }
 
 func (b *Builder) Count() (uint64, error) {
+	if b.where == nil {
+		b.Where()
+	}
+
 	return b.where.Count()
 }
 
