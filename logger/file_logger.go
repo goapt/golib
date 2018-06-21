@@ -1,9 +1,7 @@
 package logger
 
 import (
-	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 )
@@ -15,29 +13,13 @@ type FileLogger struct {
 }
 
 // NewFileLogger providers a file logger based on logrus
-func NewFileLogger(filename string, options ...func(*logrus.Logger)) (ILogger, error) {
-	absPath, err := filepath.Abs(filename)
-	if err != nil {
-		return nil, fmt.Errorf("can't get file abs path: filename = %v, err = %v", filename, err)
-	}
-
-	dirPath := filepath.Dir(absPath)
-	if _, err := os.Stat(dirPath); err != nil {
-		err = os.MkdirAll(dirPath, os.ModePerm)
-		if err != nil {
-			return nil, fmt.Errorf("can't mkdirall directory: path = %v, err = %v", absPath, err)
-		}
-	}
-
-	f, err := os.OpenFile(absPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-	if err != nil {
-		return nil, fmt.Errorf("can't open file: path = %v, err = %v", absPath, err)
-	}
-
+func NewFileLogger(options ...func(*logrus.Logger)) (ILogger, error) {
 	l := &logrus.Logger{
-		Out:       f,
-		Formatter: &logrus.JSONFormatter{},
-		Hooks:     make(logrus.LevelHooks),
+		Out: os.Stderr,
+		Formatter: &logrus.JSONFormatter{
+			TimestampFormat: "2006-01-02 15:04:05",
+		},
+		Hooks: make(logrus.LevelHooks),
 	}
 
 	for _, option := range options {
