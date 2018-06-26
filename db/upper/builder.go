@@ -234,6 +234,11 @@ func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]in
 	for k, v := range fields {
 		v = reflect.Indirect(v)
 		if v.IsValid() && !inSlice(k, zv) {
+			t, ok := v.Interface().(time.Time)
+			if ok && t.IsZero() {
+				continue
+			}
+
 			switch v.Interface().(type) {
 			case int, int8, int16, int32, int64:
 				c := v.Int()
@@ -274,8 +279,13 @@ func zeroValueFilter(fields map[string]reflect.Value, zv []string) map[string]in
 func structAutoTime(fields map[string]reflect.Value, f []string) {
 	for k, v := range fields {
 		v = reflect.Indirect(v)
-		if v.IsValid() && inSlice(k, f) && v.Type().Kind() == reflect.String {
-			v.SetString(time.Now().Format("2006-01-02 15:04:05"))
+		if v.IsValid() && inSlice(k, f) {
+			switch v.Type().Kind() {
+			case reflect.String:
+				v.SetString(time.Now().Format("2006-01-02 15:04:05"))
+			case reflect.Struct:
+				v.Set(reflect.ValueOf(time.Now()))
+			}
 		}
 	}
 }
