@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/verystar/golib/logger"
-	"github.com/verystar/golib/monitor"
+	"github.com/verystar/logger"
+	"github.com/verystar/monitor"
 )
 
 const (

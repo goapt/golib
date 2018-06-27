@@ -2,12 +2,11 @@ package crontab
 
 import (
 	"fmt"
+	"log"
 	"math"
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/verystar/golib/logger"
 )
 
 type ICrontab interface {
@@ -65,7 +64,7 @@ func (c *Crontab) IsDue(currentDate time.Time) bool {
 
 		duration, err := time.ParseDuration(descriptor[len(every):])
 		if err != nil {
-			logger.Error(fmt.Sprintf("Failed to parse duration %s: %s", descriptor, err.Error()))
+			log.Printf(fmt.Sprintf("Failed to parse duration %s: %s", descriptor, err.Error()))
 			return false
 		}
 
@@ -88,10 +87,6 @@ func Register(c ICrontab) {
 }
 
 func Run(t time.Time, ctx interface{}) {
-	log := logger.NewLogger(func(c *logger.Config) {
-		c.LogName = "cron"
-	})
-
 	//批量执行当前crontab
 	var wg sync.WaitGroup
 	for _, c := range Crontabs {
@@ -100,7 +95,7 @@ func Run(t time.Time, ctx interface{}) {
 			go func(c ICrontab, ctx interface{}) {
 				defer wg.Done()
 				fmt.Println("Run:" + c.GetName())
-				log.Info("[Go Cron]Run:%s", c.GetName())
+				log.Printf("[Go Cron]Run:%s", c.GetName())
 				handle := c.GetHandle()
 				handle(ctx)
 			}(c, ctx)

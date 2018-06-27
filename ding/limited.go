@@ -10,7 +10,7 @@ import (
 //var send_map = make(map[string]time.Time)
 var send_map sync.Map
 
-func LimitedAlarm(key string, duration time.Duration, content string, at ...[]string) error {
+func LimitedAlarm(key string, duration time.Duration, content string, at ...string) error {
 	current := time.Now()
 	if data, ok := send_map.Load(key); ok {
 		// 如果没有超过时间限制 则不发送

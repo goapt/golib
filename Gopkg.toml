@@ -30,14 +30,6 @@
   version = "0.4.6"
 
 [[constraint]]
-  name = "github.com/go-redis/redis"
-  version = "6.11.0"
-
-[[constraint]]
-  name = "github.com/nsqio/go-nsq"
-  version = "1.0.7"
-
-[[constraint]]
   name = "github.com/pkg/errors"
   version = "0.8.0"
 
@@ -50,17 +42,5 @@
   version = "1.2.1"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/verystar/db"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/verystar/hashstructure"
-
-[[constraint]]
   name = "golang.org/x/text"
   version = "0.3.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/jmoiron/sqlx"

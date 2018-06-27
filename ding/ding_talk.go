@@ -24,7 +24,7 @@ type DingTalkResponse struct {
 	Errmsg  string `json:"errmsg"`
 }
 
-func Alarm(content string, at ...[]string) error {
+func Alarm(content string, at ...string) error {
 	dingtalk := &DingTalkRequest{
 		Msgtype: "text",
 		Text: map[string]string{
