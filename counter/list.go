@@ -1,10 +1,10 @@
 package counter
 
 import (
-	"errors"
-	"time"
-	"sync/atomic"
 	"context"
+	"errors"
+	"sync/atomic"
+	"time"
 )
 
 type Ceil struct {
@@ -61,18 +61,7 @@ func (l *Timeline) Loop() {
 	for {
 		select {
 		case t := <-timer.C:
-			//fmt.Println("loop ", t)
 			unix := t.Unix()
-			//for _, c := range l.Counters {
-			//	fmt.Printf("%+v\n", c)
-			//}
-			//for _, c := range l.Container {
-			//	fmt.Printf("  %+v\n", c)
-			//	for _, cc := range c.Ceils {
-			//		fmt.Printf("   %+v\n", cc)
-			//	}
-			//}
-
 			// 收集 Couter信息 ， 添加头部
 			l.Push(unix)
 			// 剔除尾部

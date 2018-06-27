@@ -1,18 +1,16 @@
 package filesystem
 
-
 import (
+	"errors"
 	"fmt"
+	"log"
 	"math"
 	"regexp"
 	"strconv"
-
-	"github.com/pkg/errors"
-	"github.com/verystar/golib/logger"
 )
 
 const (
-	_ = 1 << (10 * iota)
+	_  = 1 << (10 * iota)
 	KB
 	MB
 	GB
@@ -144,7 +142,7 @@ func Parse(s string) (int64, error) {
 func MustParse(s string) int64 {
 	v, err := Parse(s)
 	if err != nil {
-		logger.Fatal(err.Error(), "parse bytesize failed")
+		log.Fatalf("parse bytesize failed:%s", err.Error())
 	}
 	return v
 }

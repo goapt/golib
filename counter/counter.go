@@ -1,8 +1,8 @@
 package counter
 
 import (
-	"time"
 	"sync/atomic"
+	"time"
 )
 
 type Handler func(c *Counter, t time.Time, sum int32)
@@ -22,7 +22,7 @@ func NewCounter(duration int64, quite int64, max int32) *Counter {
 		Duration: duration,
 		Quite:    quite,
 		Max:      max,
-		Mata: make(map[string]interface{}),
+		Mata:     make(map[string]interface{}),
 	}
 	return c
 }

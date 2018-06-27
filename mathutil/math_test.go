@@ -15,17 +15,6 @@ func TestAbsInt(t *testing.T) {
 	}
 }
 
-func TestRound(t *testing.T) {
-	list := []float64{-3.4, -0.8, 1, 1.3, 1.5, 1.6}
-	list2 := []int{-3, -1, 1, 1, 2, 2}
-
-	for k, v := range list {
-		if vv, err := Round(v); vv != list2[k] || err != nil {
-			t.Errorf("%f Round is not equal to %d, error: %s", v, list2[k], err)
-		}
-	}
-}
-
 func TestMaxInt(t *testing.T) {
 	min := 1
 	max := 2

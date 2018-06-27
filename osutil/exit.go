@@ -3,8 +3,8 @@ package osutil
 import (
 	"os"
 	"os/signal"
-	"syscall"
 	"sync"
+	"syscall"
 )
 
 var showdownFns [] func(os.Signal)
