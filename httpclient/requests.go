@@ -19,7 +19,7 @@ type IHook interface {
 
 type HttpClient struct {
 	*http.Client
-	hook IHook
+	Hook IHook
 }
 
 func NewClient(options ...func(*HttpClient)) *HttpClient {
@@ -61,14 +61,14 @@ func (h *HttpClient) Get(url string, options ... func(r *http.Request)) (resp *h
 }
 
 func (h *HttpClient) Do(req *http.Request) (resp *http.Response, err error) {
-	if h.hook != nil{
-		h.hook.Befor(req)
+	if h.Hook != nil{
+		h.Hook.Befor(req)
 	}
 
 	rep, err := h.Client.Do(req)
 
-	if h.hook != nil {
-		h.hook.After(req, rep, err)
+	if h.Hook != nil {
+		h.Hook.After(req, rep, err)
 	}
 
 	return rep, err
