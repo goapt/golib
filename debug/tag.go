@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/verystar/golib/color"
@@ -23,6 +24,7 @@ type DebugTagData struct {
 type DebugTag struct {
 	t    time.Time
 	data []DebugTagData
+	mu sync.RWMutex
 }
 
 func NewDebugTag(options ...func(*DebugTag)) *DebugTag {
@@ -60,6 +62,8 @@ func (d *DebugTag) Tag(key string, data ...interface{}) {
 		}
 	}
 
+	d.mu.Lock()
+	defer d.mu.Unlock()
 	d.data = append(d.data, DebugTagData{
 		Key:     key,
 		Data:    data,
