@@ -28,6 +28,6 @@ func WaitSignal(sigs ...os.Signal) {
 
 func RegisterShutDown(fn func(os.Signal)) {
 	l.Lock()
+	defer l.Unlock()
 	showdownFns = append(showdownFns, fn)
-	l.Unlock()
 }
