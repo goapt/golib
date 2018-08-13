@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync/atomic"
 	"time"
+	"sync"
 )
 
 type ITask interface {
@@ -18,6 +19,7 @@ type Dispatcher struct {
 	IsStopAddTask bool
 	StopChan      chan struct{}
 	IoWait        time.Duration
+	l sync.Mutex
 }
 
 func NewDispatcher(ctx context.Context, maxTaskNum int) *Dispatcher {
@@ -33,8 +35,17 @@ func NewDispatcher(ctx context.Context, maxTaskNum int) *Dispatcher {
 }
 
 func (d *Dispatcher) SetIoWait(duration time.Duration) {
+	d.l.Lock()
+	defer d.l.Unlock()
 	d.IoWait = duration
 }
+
+func (d *Dispatcher) GetIoWait()time.Duration{
+	d.l.Lock()
+	defer d.l.Unlock()
+	return d.IoWait
+}
+
 func (d *Dispatcher) Wait() {
 	// 等待结束
 	<-d.StopChan
@@ -58,13 +69,25 @@ func (d *Dispatcher) run() {
 		default:
 
 			//fmt.Println("IsStopAddTask", d.IsStopAddTask, "counter", d.counter)
-			if d.IsStopAddTask && atomic.LoadInt32(&d.counter) < 1 {
+			if d.GetStopAddTask() && atomic.LoadInt32(&d.counter) < 1 {
 				d.StopChan <- struct{}{} // 结束
 				return
 			}
-			time.Sleep(d.IoWait)
+			time.Sleep(d.GetIoWait())
 		}
 	}
+}
+
+func (d *Dispatcher) StopAddTask(){
+	d.l.Lock()
+	defer d.l.Unlock()
+	d.IsStopAddTask = true
+}
+
+func (d *Dispatcher) GetStopAddTask()bool{
+	d.l.Lock()
+	defer d.l.Unlock()
+	return d.IsStopAddTask
 }
 
 func (d *Dispatcher) AddTask(task ITask) {
