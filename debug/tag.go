@@ -14,6 +14,22 @@ import (
 	"github.com/verystar/golib/color"
 )
 
+
+var (
+	debugFlag = "off"
+	printTag  = ""
+	savePath  = "./debug/"
+)
+
+func Open(flag, tag string) {
+	debugFlag = flag
+	printTag = tag
+}
+
+func SavePath(p string) {
+	savePath = p
+}
+
 type DebugTagData struct {
 	Key     string
 	Data    interface{}
