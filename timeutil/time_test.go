@@ -49,10 +49,17 @@ func TestToUnix(t *testing.T) {
 	}
 }
 func TestSplitTime(t *testing.T) {
-	res, err := SplitTime("2018-08-01 00:00:00", "2018-08-01 23:59:59", 2*time.Hour)
+	startTime, err := ParseDateTime("2018-08-01 00:00:00")
 	if err != nil {
-		t.Errorf("time split error :%s\n", err)
+		t.Fatalf("parse datetime error")
 	}
+	endTime, err := ParseDateTime("2018-08-01 23:59:59")
+	if err != nil {
+		t.Fatalf("parse datetime error")
+	}
+
+	res := SplitTime(startTime, endTime, 2*time.Hour)
+
 	l := len(res)
 	if l != 12 {
 		t.Errorf("time split error,want splited length 12,got %d \n", l)

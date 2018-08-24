@@ -42,33 +42,24 @@ func ToUnix(tstr string) int64 {
 	return t.Unix()
 }
 
-func SplitTime(startTime, endTime string, duration time.Duration) ([]*TimeRange, error) {
+func SplitTime(startTime, endTime time.Time, duration time.Duration) []*TimeRange {
 	var (
-		err error
-		s   time.Time
-		e   time.Time
 		t   time.Time
 		r   = make([]*TimeRange, 0)
 	)
-	if s, err = ParseDateTime(startTime); err != nil {
-		return nil, err
-	}
-	if e, err = ParseDateTime(endTime); err != nil {
-		return nil, err
-	}
 
-	for s.Before(e) {
+	for startTime.Before(endTime) {
 		tr := &TimeRange{}
-		tr.StartTime = FormatDateTime(s)
+		tr.StartTime = FormatDateTime(startTime)
 
-		t = s.Add(duration - time.Second)
-		if t.After(e) {
-			t = e
+		t = startTime.Add(duration - time.Second)
+		if t.After(endTime) {
+			t = endTime
 		}
 		tr.EndTime = FormatDateTime(t)
-		s = s.Add(duration)
+		startTime = startTime.Add(duration)
 		r = append(r, tr)
 	}
 
-	return r, nil
+	return r
 }
