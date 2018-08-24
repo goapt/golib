@@ -2,6 +2,7 @@ package timeutil
 
 import (
 	"testing"
+	"time"
 )
 
 func TestParseDate(t *testing.T) {
@@ -45,5 +46,15 @@ func TestToUnix(t *testing.T) {
 
 	if ToUnix(testDate) != 1351034475 {
 		t.Fatalf("to unix error")
+	}
+}
+func TestSplitTime(t *testing.T) {
+	res, err := SplitTime("2018-08-01 00:00:00", "2018-08-01 23:59:59", 2*time.Hour)
+	if err != nil {
+		t.Errorf("time split error :%s\n", err)
+	}
+	l := len(res)
+	if l != 12 {
+		t.Errorf("time split error,want splited length 12,got %d \n", l)
 	}
 }
