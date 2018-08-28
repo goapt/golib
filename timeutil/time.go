@@ -3,8 +3,8 @@ package timeutil
 import "time"
 
 type TimeRange struct {
-	StartTime string
-	EndTime   string
+	StartTime time.Time
+	EndTime   time.Time
 }
 
 func Date() string {
@@ -50,13 +50,13 @@ func SplitTime(startTime, endTime time.Time, duration time.Duration) []*TimeRang
 
 	for startTime.Before(endTime) {
 		tr := &TimeRange{}
-		tr.StartTime = FormatDateTime(startTime)
+		tr.StartTime = startTime
 
 		t = startTime.Add(duration - time.Second)
 		if t.After(endTime) {
 			t = endTime
 		}
-		tr.EndTime = FormatDateTime(t)
+		tr.EndTime = t
 		startTime = startTime.Add(duration)
 		r = append(r, tr)
 	}

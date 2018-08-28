@@ -64,4 +64,8 @@ func TestSplitTime(t *testing.T) {
 	if l != 12 {
 		t.Errorf("time split error,want splited length 12,got %d \n", l)
 	}
+
+	if res[0].EndTime.Format("2006-01-02 15:04:05") != "2018-08-01 01:59:59" {
+		t.Error("time split item error")
+	}
 }
