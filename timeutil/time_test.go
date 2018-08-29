@@ -58,7 +58,11 @@ func TestSplitTime(t *testing.T) {
 		t.Fatalf("parse datetime error")
 	}
 
-	res := SplitTime(startTime, endTime, 2*time.Hour)
+	res := SplitTime(startTime, endTime, 1*time.Hour)
+
+	//for _,v := range res{
+	//	fmt.Println(v.StartTime,v.EndTime)
+	//}
 
 	l := len(res)
 	if l != 12 {
