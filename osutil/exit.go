@@ -8,7 +8,7 @@ import (
 )
 
 var showdownFns [] func(os.Signal)
-var l = &sync.Mutex{}
+var l = sync.Mutex{}
 
 func WaitSignal(sigs ...os.Signal) {
 	stopSignals := make(chan os.Signal, 1)
