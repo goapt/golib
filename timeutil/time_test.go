@@ -73,3 +73,12 @@ func TestSplitTime(t *testing.T) {
 		t.Error("time split item error")
 	}
 }
+
+func TestFormatUnix(t *testing.T) {
+	testDate := "2018-11-02 13:48:00"
+	ti := ToUnix(testDate)
+	f := FormatUnix(ti, "2006-01-02 15:04:05")
+	if FormatUnix(ti, "2006-01-02 15:04:05") != "2018-11-02 13:48:00" {
+		t.Errorf("unix format date error must get %s but get %s", testDate, f)
+	}
+}

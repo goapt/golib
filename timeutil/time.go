@@ -7,30 +7,34 @@ type TimeRange struct {
 	EndTime   time.Time
 }
 
+var loc, _ = time.LoadLocation("Asia/Shanghai")
+
 func Date() string {
-	return time.Now().Format("2006-01-02")
+	return time.Now().In(loc).Format("2006-01-02")
 }
 
 func DateTime() string {
-	return time.Now().Format("2006-01-02 15:04:05")
+	return time.Now().In(loc).Format("2006-01-02 15:04:05")
 }
 
 func ParseDate(tstr string) (time.Time, error) {
-	loc, _ := time.LoadLocation("Asia/Shanghai")
 	return time.ParseInLocation("2006-01-02", tstr, loc)
 }
 
 func ParseDateTime(tstr string) (time.Time, error) {
-	loc, _ := time.LoadLocation("Asia/Shanghai")
 	return time.ParseInLocation("2006-01-02 15:04:05", tstr, loc)
 }
 
 func FormatDate(t time.Time) string {
-	return t.Format("2006-01-02")
+	return t.In(loc).Format("2006-01-02")
 }
 
 func FormatDateTime(t time.Time) string {
-	return t.Format("2006-01-02 15:04:05")
+	return t.In(loc).Format("2006-01-02 15:04:05")
+}
+
+func FormatUnix(t int64, layout string) string {
+	return time.Unix(t, 0).In(loc).Format(layout)
 }
 
 func ToUnix(tstr string) int64 {
@@ -44,8 +48,8 @@ func ToUnix(tstr string) int64 {
 
 func SplitTime(startTime, endTime time.Time, duration time.Duration) []*TimeRange {
 	var (
-		t   time.Time
-		r   = make([]*TimeRange, 0)
+		t time.Time
+		r = make([]*TimeRange, 0)
 	)
 
 	for startTime.Before(endTime) {
