@@ -1,14 +1,13 @@
 package cryptoutil
 
 import (
-	"bytes"
 	"crypto/cipher"
 	"crypto/des"
 	"errors"
 )
 
 const (
-	NOPADDING    = iota
+	NOPADDING = iota
 	PKCS5PADDING
 )
 
