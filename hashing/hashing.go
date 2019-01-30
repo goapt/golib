@@ -1,6 +1,7 @@
 package hashing
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/md5"
 	"crypto/sha1"
@@ -8,6 +9,7 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"hash"
+	"io"
 	"net/url"
 	"sort"
 	"strings"
@@ -66,6 +68,16 @@ func Sign(values url.Values, app_secret string, hash ...string) (string) {
 func Md5(text string) string {
 	algorithm := md5.New()
 	return stringHasher(algorithm, text)
+}
+
+func Md5File(file io.Reader) string {
+	r := bufio.NewReader(file)
+	md5h := md5.New()
+	_, err := io.Copy(md5h, r)
+	if err != nil {
+		return ""
+	}
+	return hex.EncodeToString(md5h.Sum(nil))
 }
 
 // Sha1 hashes using sha1 algorithm
