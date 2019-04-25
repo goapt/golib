@@ -1,6 +1,8 @@
 package timeutil
 
-import "time"
+import (
+	"time"
+)
 
 type TimeRange struct {
 	StartTime time.Time
@@ -22,7 +24,23 @@ func ParseDate(tstr string) (time.Time, error) {
 }
 
 func ParseDateTime(tstr string) (time.Time, error) {
-	return time.ParseInLocation("2006-01-02 15:04:05", tstr, loc)
+	layout := "2006-01-02 15:04:05"
+	if IsRFC3339(tstr) {
+		layout = time.RFC3339
+	}
+
+	return time.ParseInLocation(layout, tstr, loc)
+}
+
+// IsRFC3339 check if string is valid timestamp value according to RFC3339
+func IsRFC3339(str string) bool {
+	return IsTime(str, time.RFC3339)
+}
+
+// IsTime check if string is valid according to given format
+func IsTime(str string, format string) bool {
+	_, err := time.Parse(format, str)
+	return err == nil
 }
 
 func FormatDate(t time.Time) string {
