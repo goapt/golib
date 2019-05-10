@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -12,19 +13,76 @@ import (
 
 var DING_TALK_TOKEN string
 
-type DingTalkRequest struct {
+type dingTalkRequest struct {
 	Msgtype string                 `json:"msgtype"`
 	Text    map[string]string      `json:"text"`
-	At      map[string]interface{} `json:"at"`
+	At      map[string]interface{} `json:"at,omitempty"`
 }
 
-type DingTalkResponse struct {
+type dingTalkResponse struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 }
 
+type dingTalkMarkdownRequest struct {
+	Msgtype  string                 `json:"msgtype"`
+	Markdown map[string]string      `json:"markdown"`
+	At       map[string]interface{} `json:"at,omitempty"`
+}
+
+func AlarmMarkdown(md string, at ...string) error {
+	dingtalk := &dingTalkMarkdownRequest{
+		Msgtype: "markdown",
+		Markdown: map[string]string{
+			"title": md[0:20],
+			"text":  md,
+		},
+	}
+
+	if len(at) > 0 {
+		dingtalk.At = map[string]interface{}{
+			"atMobiles": at,
+		}
+	}
+
+	buf, err := json.Marshal(dingtalk)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(buf))
+
+	return call(buf)
+}
+
+func call(buf []byte) error {
+	url := "https://oapi.dingtalk.com/robot/send?access_token=" + DING_TALK_TOKEN
+	resp, err := postJson(url, buf)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if data, err := ioutil.ReadAll(resp.Body); err == nil {
+		ret := &dingTalkResponse{}
+		err := json.Unmarshal(data, ret)
+		if err != nil {
+			return err
+		}
+
+		if ret.Errcode != 0 {
+			return errors.New("ding response error:" + ret.Errmsg + "[" + strconv.Itoa(ret.Errcode) + "]")
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func Alarm(content string, at ...string) error {
-	dingtalk := &DingTalkRequest{
+	dingtalk := &dingTalkRequest{
 		Msgtype: "text",
 		Text: map[string]string{
 			"content": content,
@@ -42,32 +100,10 @@ func Alarm(content string, at ...string) error {
 		return err
 	}
 
-	url := "https://oapi.dingtalk.com/robot/send?access_token=" + DING_TALK_TOKEN
-	resp, err := PostJson(url, buf)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if data, err := ioutil.ReadAll(resp.Body); err == nil {
-		ret := &DingTalkResponse{}
-		err := json.Unmarshal(data, ret)
-		if err != nil {
-			return err
-		}
-
-		if ret.Errcode != 0 {
-			return errors.New("ding response error:" + ret.Errmsg + "[" + strconv.Itoa(ret.Errcode) + "]")
-		}
-	}
-
-	if err != nil {
-		return err
-	}
-	return nil
+	return call(buf)
 }
 
-func PostJson(url string, data []byte) (*http.Response, error) {
+func postJson(url string, data []byte) (*http.Response, error) {
 	body := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
