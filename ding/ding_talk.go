@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -49,8 +48,6 @@ func AlarmMarkdown(md string, at ...string) error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(string(buf))
 
 	return call(buf)
 }
