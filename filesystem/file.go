@@ -1,6 +1,7 @@
 package filesystem
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -23,10 +24,39 @@ func IsDir(path string) bool {
 	return fio.IsDir()
 }
 
+func ReadLine(filePth string) (chan []byte, error) {
+	f, err := os.Open(filePth)
+	if err != nil {
+		return nil, err
+	}
+
+	lc := make(chan []byte)
+
+	go func() {
+		defer f.Close()
+
+		br := bufio.NewReader(f)
+		for {
+			a, _, c := br.ReadLine()
+			if c == io.EOF {
+				close(lc)
+				break
+			}
+
+			lc <- a
+		}
+	}()
+
+	return lc, nil
+}
+
 func WriteToFile(filename string, text []byte) error {
 	dir := filepath.Dir(filename)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.MkdirAll(dir, 0755)
+		err := os.MkdirAll(dir, 0755)
+		if err != nil {
+			return err
+		}
 	}
 
 	f, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
