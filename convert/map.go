@@ -3,7 +3,7 @@ package convert
 import (
 	"reflect"
 
-	"github.com/verystar/golib/reflectx"
+	"github.com/goapt/golib/reflectx"
 )
 
 var mapper = reflectx.NewMapper("db")

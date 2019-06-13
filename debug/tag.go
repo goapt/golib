@@ -11,9 +11,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/verystar/golib/color"
+	"github.com/goapt/golib/color"
 )
-
 
 var (
 	debugFlag = "off"

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/verystar/golib/debug"
+	"github.com/goapt/golib/debug"
 )
 
 func TestNewCounter(t *testing.T) {
