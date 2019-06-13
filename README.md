@@ -1,4 +1,4 @@
 # golib
 go libs
 
-<a href="https://travis-ci.org/verystar/golib"><img src="https://travis-ci.org/fifsky/goconf.svg" alt="Build Status"></a>
+<a href="https://travis-ci.org/goapt/golib"><img src="https://travis-ci.org/goapt/golib.svg" alt="Build Status"></a>
