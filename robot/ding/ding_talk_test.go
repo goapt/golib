@@ -8,7 +8,7 @@ import (
 func TestDingTalkRobot_Message(t *testing.T) {
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("DING_ROBOT_TOKEN"))
-	err := robot.Message("ccccc")
+	err := robot.Message("test")
 
 	if err != nil {
 		t.Error(err)

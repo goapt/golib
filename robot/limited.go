@@ -6,8 +6,6 @@ import (
 )
 
 // 有限的发送
-
-//var send_map = make(map[string]time.Time)
 var sendMap sync.Map
 
 func LimitedAlarm(key string, duration time.Duration, content string, at ...string) error {
