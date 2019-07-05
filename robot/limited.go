@@ -3,8 +3,6 @@ package robot
 import (
 	"sync"
 	"time"
-
-	"github.com/goapt/golib/ding/ding"
 )
 
 // 有限的发送
