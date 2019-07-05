@@ -1,4 +1,4 @@
-package ding
+package wechat
 
 import (
 	"bytes"
@@ -10,58 +10,63 @@ import (
 	"time"
 )
 
-var DING_TALK_TOKEN string
-
-type dingTalkRequest struct {
+type wechatRequest struct {
 	Msgtype string                 `json:"msgtype"`
-	Text    map[string]string      `json:"text"`
-	At      map[string]interface{} `json:"at,omitempty"`
+	Text    map[string]interface{} `json:"text"`
 }
 
-type dingTalkResponse struct {
+type wechatResponse struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 }
 
-type dingTalkMarkdownRequest struct {
+type wechatMarkdownRequest struct {
 	Msgtype  string                 `json:"msgtype"`
-	Markdown map[string]string      `json:"markdown"`
-	At       map[string]interface{} `json:"at,omitempty"`
+	Markdown map[string]interface{} `json:"markdown"`
 }
 
-func AlarmMarkdown(md string, at ...string) error {
-	dingtalk := &dingTalkMarkdownRequest{
+type WechatRobot struct {
+	Token string
+}
+
+func NewRobot() *WechatRobot {
+	return &WechatRobot{}
+}
+
+func (w *WechatRobot) SetToken(token string) {
+	w.Token = token
+}
+
+func (w *WechatRobot) MarkdownMessage(md string, at ...string) error {
+	we := &wechatMarkdownRequest{
 		Msgtype: "markdown",
-		Markdown: map[string]string{
-			"title": md[0:20],
-			"text":  md,
+		Markdown: map[string]interface{}{
+			"content": md,
 		},
 	}
 
 	if len(at) > 0 {
-		dingtalk.At = map[string]interface{}{
-			"atMobiles": at,
-		}
+		we.Markdown["mentioned_mobile_list"] = at
 	}
 
-	buf, err := json.Marshal(dingtalk)
+	buf, err := json.Marshal(we)
 	if err != nil {
 		return err
 	}
 
-	return call(buf)
+	return w.call(buf)
 }
 
-func call(buf []byte) error {
-	url := "https://oapi.dingtalk.com/robot/send?access_token=" + DING_TALK_TOKEN
-	resp, err := postJson(url, buf)
+func (w *WechatRobot) call(buf []byte) error {
+	url := "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + w.Token
+	resp, err := w.postJson(url, buf)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
 	if data, err := ioutil.ReadAll(resp.Body); err == nil {
-		ret := &dingTalkResponse{}
+		ret := &wechatResponse{}
 		err := json.Unmarshal(data, ret)
 		if err != nil {
 			return err
@@ -72,35 +77,30 @@ func call(buf []byte) error {
 		}
 	}
 
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
-func Alarm(content string, at ...string) error {
-	dingtalk := &dingTalkRequest{
+func (w *WechatRobot) Message(content string, at ...string) error {
+	we := &wechatRequest{
 		Msgtype: "text",
-		Text: map[string]string{
+		Text: map[string]interface{}{
 			"content": content,
 		},
 	}
 
 	if len(at) > 0 {
-		dingtalk.At = map[string]interface{}{
-			"atMobiles": at,
-		}
+		we.Text["mentioned_mobile_list"] = at
 	}
 
-	buf, err := json.Marshal(dingtalk)
+	buf, err := json.Marshal(we)
 	if err != nil {
 		return err
 	}
 
-	return call(buf)
+	return w.call(buf)
 }
 
-func postJson(url string, data []byte) (*http.Response, error) {
+func (w *WechatRobot) postJson(url string, data []byte) (*http.Response, error) {
 	body := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {
