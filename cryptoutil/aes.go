@@ -29,6 +29,5 @@ func AesDecrypt(key, crypted []byte) ([]byte, error) {
 	blockMode := cipher.NewCBCDecrypter(block, key[:blockSize])
 	origData := make([]byte, len(crypted))
 	blockMode.CryptBlocks(origData, crypted)
-	origData = PKCSUnPadding(origData)
-	return origData, nil
+	return PKCSUnPadding(origData)
 }

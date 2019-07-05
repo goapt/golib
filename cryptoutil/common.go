@@ -13,10 +13,13 @@ func PKCSPadding(text []byte, blockSize int) []byte {
 }
 
 //去除PKCS5补位
-func PKCSUnPadding(text []byte) []byte {
+func PKCSUnPadding(text []byte) ([]byte, error) {
 	length := len(text)
 	padtext := int(text[length-1])
-	return text[:(length - padtext)]
+	if length < padtext {
+		return nil, errors.New("unpadding length error")
+	}
+	return text[:(length - padtext)], nil
 }
 
 //补位方法
@@ -43,7 +46,7 @@ func UnPadding(text []byte, padding int) ([]byte, error) {
 			return nil, errors.New("text length invalid")
 		}
 	case PKCS5PADDING:
-		return PKCSUnPadding(text), nil
+		return PKCSUnPadding(text)
 	default:
 		return nil, errors.New("padding type error")
 	}
