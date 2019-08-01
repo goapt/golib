@@ -10,35 +10,35 @@ import (
 	"time"
 )
 
-type wechatRequest struct {
+type Request struct {
 	Msgtype string                 `json:"msgtype"`
 	Text    map[string]interface{} `json:"text"`
 }
 
-type wechatResponse struct {
+type Response struct {
 	Errcode int    `json:"errcode"`
 	Errmsg  string `json:"errmsg"`
 }
 
-type wechatMarkdownRequest struct {
+type MarkdownRequest struct {
 	Msgtype  string                 `json:"msgtype"`
 	Markdown map[string]interface{} `json:"markdown"`
 }
 
-type WechatRobot struct {
+type Robot struct {
 	Token string
 }
 
-func NewRobot() *WechatRobot {
-	return &WechatRobot{}
+func NewRobot() *Robot {
+	return &Robot{}
 }
 
-func (w *WechatRobot) SetToken(token string) {
-	w.Token = token
+func (r *Robot) SetToken(token string) {
+	r.Token = token
 }
 
-func (w *WechatRobot) MarkdownMessage(md string, at ...string) error {
-	we := &wechatMarkdownRequest{
+func (r *Robot) MarkdownMessage(md string, at ...string) error {
+	we := &MarkdownRequest{
 		Msgtype: "markdown",
 		Markdown: map[string]interface{}{
 			"content": md,
@@ -54,19 +54,19 @@ func (w *WechatRobot) MarkdownMessage(md string, at ...string) error {
 		return err
 	}
 
-	return w.call(buf)
+	return r.call(buf)
 }
 
-func (w *WechatRobot) call(buf []byte) error {
-	url := "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + w.Token
-	resp, err := w.postJson(url, buf)
+func (r *Robot) call(buf []byte) error {
+	url := "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=" + r.Token
+	resp, err := r.postJson(url, buf)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
 	if data, err := ioutil.ReadAll(resp.Body); err == nil {
-		ret := &wechatResponse{}
+		ret := &Response{}
 		err := json.Unmarshal(data, ret)
 		if err != nil {
 			return err
@@ -80,8 +80,8 @@ func (w *WechatRobot) call(buf []byte) error {
 	return nil
 }
 
-func (w *WechatRobot) Message(content string, at ...string) error {
-	we := &wechatRequest{
+func (r *Robot) Message(content string, at ...string) error {
+	we := &Request{
 		Msgtype: "text",
 		Text: map[string]interface{}{
 			"content": content,
@@ -97,10 +97,14 @@ func (w *WechatRobot) Message(content string, at ...string) error {
 		return err
 	}
 
-	return w.call(buf)
+	return r.call(buf)
 }
 
-func (w *WechatRobot) postJson(url string, data []byte) (*http.Response, error) {
+func (r *Robot) CardMessage(title, text string, btns []map[string]string) error {
+	return nil
+}
+
+func (r *Robot) postJson(url string, data []byte) (*http.Response, error) {
 	body := bytes.NewBuffer(data)
 	req, err := http.NewRequest("POST", url, body)
 	if err != nil {

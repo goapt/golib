@@ -17,6 +17,7 @@ type RobotInterface interface {
 	SetToken(token string)
 	Message(text string, at ...string) error
 	MarkdownMessage(text string, at ...string) error
+	CardMessage(title, text string, btns []map[string]string) error
 }
 
 func Init(robot RobotInterface) {
@@ -43,6 +44,14 @@ func MarkdownMessage(text string, at ...string) error {
 	}
 
 	return instance.MarkdownMessage(text, at...)
+}
+
+func CardMessage(title, text string, btns []map[string]string) error {
+	if instance == nil {
+		return errors.New("robot instance is nil")
+	}
+
+	return instance.CardMessage(title, text, btns)
 }
 
 func Color(text, color string) string {
