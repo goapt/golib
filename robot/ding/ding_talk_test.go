@@ -6,6 +6,9 @@ import (
 )
 
 func TestDingTalkRobot_Message(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip")
+	}
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("DING_ROBOT_TOKEN"))
 	err := robot.Message("test")
@@ -16,6 +19,9 @@ func TestDingTalkRobot_Message(t *testing.T) {
 }
 
 func TestDingTalkRobot_MarkdownMessage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip")
+	}
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("DING_ROBOT_TOKEN"))
 
@@ -27,6 +33,9 @@ func TestDingTalkRobot_MarkdownMessage(t *testing.T) {
 }
 
 func TestDingTalkRobot_CardMessage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip")
+	}
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("DING_ROBOT_TOKEN"))
 

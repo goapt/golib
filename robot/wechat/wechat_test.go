@@ -6,6 +6,9 @@ import (
 )
 
 func TestWechatRobot_Message(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip")
+	}
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("WECHAT_ROBOT_TOKEN"))
 	err := robot.Message("test")
@@ -15,6 +18,9 @@ func TestWechatRobot_Message(t *testing.T) {
 }
 
 func TestWechatRobot_MarkdownMessage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skip")
+	}
 	robot := NewRobot()
 	robot.SetToken(os.Getenv("WECHAT_ROBOT_TOKEN"))
 	err := robot.MarkdownMessage("## 呵呵\n\n > Hello \n\n")
