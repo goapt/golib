@@ -9,7 +9,7 @@ build: fmt-check
 
 .PHONY: test
 test:
-	$(GO) test -v -coverprofile=cover.out ./...
+	$(GO) test -short -v -coverprofile=cover.out ./...
 
 .PHONY: cover
 cover:
