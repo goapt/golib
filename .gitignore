@@ -1,4 +1,4 @@
 examples/
 /vendor
 .idea/
-Gopkg.lock
+cover.out
