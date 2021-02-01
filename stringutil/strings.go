@@ -1,22 +1,19 @@
 package stringutil
 
 import (
+	"encoding/json"
 	"math/rand"
 	"strings"
-	"time"
 	"unicode/utf8"
 )
 
-//生成随机字符串
+// 生成随机字符串
 const randomStr = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-//5倍的性能提升，放到外面
-var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 func RandomString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = randomStr[seededRand.Intn(len(randomStr))]
+		b[i] = randomStr[rand.Intn(len(randomStr))]
 	}
 	return string(b)
 }
@@ -49,7 +46,7 @@ func SnakeCasedName(name string) string {
 	newstr := make([]rune, 0)
 	for idx, chr := range name {
 		if isUpper := 'A' <= chr && chr <= 'Z'; isUpper {
-			if idx > 0 {
+			if idx > 0 && name[idx-1] != '_' {
 				newstr = append(newstr, '_')
 			}
 			chr -= 'A' - 'a'
@@ -63,7 +60,7 @@ func SnakeCasedName(name string) string {
 func TrimBom(s string) string {
 	buf := []byte(s)
 	if len(buf) > 3 {
-		//0xef, 0xbb, 0xbf 239 187 191
+		// 0xef, 0xbb, 0xbf 239 187 191
 		if buf[0] == 239 && buf[1] == 187 && buf[2] == 191 {
 			return string(buf[3:])
 		}
@@ -82,4 +79,9 @@ func Leftpad(s string, length int, ch ...rune) string {
 		s = strings.Repeat(string(c), l) + s
 	}
 	return s
+}
+
+func MustJsonEncode(v interface{}) string {
+	b, _ := json.Marshal(v)
+	return string(b)
 }
