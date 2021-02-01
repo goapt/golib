@@ -6,8 +6,6 @@ import (
 	"math/rand"
 	"testing"
 	"time"
-
-	"github.com/goapt/golib/debug"
 )
 
 func TestNewCounter(t *testing.T) {
@@ -23,7 +21,6 @@ func TestNewCounter(t *testing.T) {
 	go func() {
 		for {
 			n := rand.Int31n(10)
-			debug.Tag("add", n)
 			c.Add(n)
 			fmt.Println("CounterSum", l.CounterSum(c, time.Now()))
 			time.Sleep(time.Second / 2)
@@ -31,7 +28,7 @@ func TestNewCounter(t *testing.T) {
 	}()
 
 	c.AddHandle(func(c *Counter, t time.Time, sum int32) {
-		debug.Tag("handle", fmt.Sprintf("%+v", c), t, sum)
+		fmt.Println("handle", fmt.Sprintf("%+v", c), t, sum)
 	})
 	<-time.After(10 * time.Second)
 }

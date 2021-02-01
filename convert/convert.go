@@ -25,7 +25,7 @@ import (
 type StrTo string
 
 func (f StrTo) Exist() bool {
-	return string(f) != string(0x1E)
+	return string(f) != string(rune(0x1E))
 }
 
 func (f StrTo) Int() (int, error) {
