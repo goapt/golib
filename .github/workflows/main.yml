@@ -19,6 +19,8 @@ jobs:
       - name: Test
         env:
           TZ: Asia/Shanghai
+          DING_ROBOT_TOKEN: ${{ secrets.DING_ROBOT_TOKEN }}
+          WECHAT_ROBOT_TOKEN: ${{ secrets.WECHAT_ROBOT_TOKEN }}
         run: |
           make test
           bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN}}

@@ -1,4 +1,5 @@
 # golib
-go libs
+golang library
 
-<a href="https://travis-ci.org/goapt/golib"><img src="https://travis-ci.org/goapt/golib.svg" alt="Build Status"></a>
+![build](https://github.com/goapt/golib/workflows/build/badge.svg)
+<a href="https://codecov.io/gh/goapt/golib"><img src="https://codecov.io/gh/goapt/golib/branch/master/graph/badge.svg" alt="codecov"></a>
