@@ -2,3 +2,5 @@ examples/
 /vendor
 .idea/
 cover.out
+cover_total.out
+cover.html
