@@ -13,3 +13,27 @@ func DiffSlice(a, b []string) []string {
 	}
 	return ab
 }
+
+func MinSlice(v []int64) (m int64) {
+	if len(v) > 0 {
+		m = v[0]
+	}
+	for i := 1; i < len(v); i++ {
+		if v[i] < m {
+			m = v[i]
+		}
+	}
+	return
+}
+
+func MaxSlice(v []int64) (m int64) {
+	if len(v) > 0 {
+		m = v[0]
+	}
+	for i := 1; i < len(v); i++ {
+		if v[i] > m {
+			m = v[i]
+		}
+	}
+	return
+}
