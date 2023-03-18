@@ -3,14 +3,13 @@ package filesystem
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"regexp"
 	"strconv"
 )
 
 const (
-	_  = 1 << (10 * iota)
+	_ = 1 << (10 * iota)
 	KB
 	MB
 	GB
@@ -142,7 +141,8 @@ func Parse(s string) (int64, error) {
 func MustParse(s string) int64 {
 	v, err := Parse(s)
 	if err != nil {
-		log.Fatalf("parse bytesize failed:%s", err.Error())
+		//log.Fatalf("parse bytesize failed:%s", err.Error())
+		panic("parse bytesize failed:" + err.Error())
 	}
 	return v
 }

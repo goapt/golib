@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -75,7 +75,7 @@ func (r *Robot) call(buf []byte) error {
 	}
 	defer resp.Body.Close()
 
-	if data, err := ioutil.ReadAll(resp.Body); err == nil {
+	if data, err := io.ReadAll(resp.Body); err == nil {
 		ret := &Response{}
 		err := json.Unmarshal(data, ret)
 		if err != nil {
