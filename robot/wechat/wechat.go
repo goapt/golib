@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,6 +23,47 @@ type Response struct {
 type MarkdownRequest struct {
 	Msgtype  string                 `json:"msgtype"`
 	Markdown map[string]interface{} `json:"markdown"`
+}
+
+type JumpList struct {
+	Type     int    `json:"type"`
+	Url      string `json:"url,omitempty"`
+	Title    string `json:"title"`
+	Appid    string `json:"appid,omitempty"`
+	Pagepath string `json:"pagepath,omitempty"`
+}
+
+type TemplateCard struct {
+	CardType string `json:"card_type"`
+	Source   struct {
+		IconUrl   string `json:"icon_url"`
+		Desc      string `json:"desc"`
+		DescColor int    `json:"desc_color"`
+	} `json:"source"`
+	MainTitle struct {
+		Title string `json:"title"`
+		Desc  string `json:"desc"`
+	} `json:"main_title"`
+	QuoteArea struct {
+		Type      int    `json:"type"`
+		Url       string `json:"url"`
+		Appid     string `json:"appid"`
+		Pagepath  string `json:"pagepath"`
+		Title     string `json:"title"`
+		QuoteText string `json:"quote_text"`
+	} `json:"quote_area"`
+	JumpList   []JumpList `json:"jump_list"`
+	CardAction struct {
+		Type     int    `json:"type"`
+		Url      string `json:"url"`
+		Appid    string `json:"appid"`
+		Pagepath string `json:"pagepath"`
+	} `json:"card_action"`
+}
+
+type CardRequest struct {
+	Msgtype      string       `json:"msgtype"`
+	TemplateCard TemplateCard `json:"template_card"`
 }
 
 type Robot struct {
@@ -65,7 +106,7 @@ func (r *Robot) call(buf []byte) error {
 	}
 	defer resp.Body.Close()
 
-	if data, err := ioutil.ReadAll(resp.Body); err == nil {
+	if data, err := io.ReadAll(resp.Body); err == nil {
 		ret := &Response{}
 		err := json.Unmarshal(data, ret)
 		if err != nil {
@@ -101,7 +142,32 @@ func (r *Robot) Message(content string, at ...string) error {
 }
 
 func (r *Robot) CardMessage(title, text string, btns []map[string]string) error {
-	return nil
+	card := &CardRequest{
+		Msgtype: "template_card",
+	}
+
+	card.TemplateCard.CardType = "text_notice"
+	card.TemplateCard.MainTitle.Title = title
+	card.TemplateCard.QuoteArea.QuoteText = text
+	card.TemplateCard.CardAction.Type = 1
+
+	for _, btn := range btns {
+		card.TemplateCard.JumpList = append(card.TemplateCard.JumpList, JumpList{
+			Type:  1,
+			Title: btn["title"],
+			Url:   btn["actionURL"],
+		})
+	}
+
+	card.TemplateCard.CardAction.Type = 1
+	card.TemplateCard.CardAction.Url = btns[0]["actionURL"]
+
+	buf, err := json.Marshal(card)
+	if err != nil {
+		return err
+	}
+
+	return r.call(buf)
 }
 
 func (r *Robot) postJson(url string, data []byte) (*http.Response, error) {
