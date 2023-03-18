@@ -34,9 +34,9 @@ func TestWechatRobot_CardMessage(t *testing.T) {
 		t.Skip("skip")
 	}
 	robot := NewRobot()
-	robot.SetToken(os.Getenv("DING_ROBOT_TOKEN"))
+	robot.SetToken("16755e18-448c-4ee7-9fbb-e36bdf30f3c3")
 
-	err := robot.CardMessage("要事提醒", "该起床了", []map[string]string{
+	err := robot.CardMessage("要事提醒", "该起床了该起床了该起床了该起床了该起床了该起床了该起床了该起床了该起床了该起床了\n", []map[string]string{
 		{
 			"title":     "收到提醒",
 			"actionURL": "https://www.fifsky.com/",

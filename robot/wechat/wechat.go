@@ -34,26 +34,14 @@ type JumpList struct {
 }
 
 type TemplateCard struct {
-	CardType string `json:"card_type"`
-	Source   struct {
-		IconUrl   string `json:"icon_url"`
-		Desc      string `json:"desc"`
-		DescColor int    `json:"desc_color"`
-	} `json:"source"`
+	CardType  string `json:"card_type"`
 	MainTitle struct {
 		Title string `json:"title"`
 		Desc  string `json:"desc"`
 	} `json:"main_title"`
-	QuoteArea struct {
-		Type      int    `json:"type"`
-		Url       string `json:"url"`
-		Appid     string `json:"appid"`
-		Pagepath  string `json:"pagepath"`
-		Title     string `json:"title"`
-		QuoteText string `json:"quote_text"`
-	} `json:"quote_area"`
-	JumpList   []JumpList `json:"jump_list"`
-	CardAction struct {
+	SubTitleText string     `json:"sub_title_text"`
+	JumpList     []JumpList `json:"jump_list"`
+	CardAction   struct {
 		Type     int    `json:"type"`
 		Url      string `json:"url"`
 		Appid    string `json:"appid"`
@@ -148,7 +136,7 @@ func (r *Robot) CardMessage(title, text string, btns []map[string]string) error 
 
 	card.TemplateCard.CardType = "text_notice"
 	card.TemplateCard.MainTitle.Title = title
-	card.TemplateCard.QuoteArea.QuoteText = text
+	card.TemplateCard.SubTitleText = text
 	card.TemplateCard.CardAction.Type = 1
 
 	for _, btn := range btns {
